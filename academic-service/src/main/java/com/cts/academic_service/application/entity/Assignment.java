@@ -24,10 +24,6 @@ public class Assignment {
     private LocalDateTime assignmentDueDate;
     private String assignmentStatus;
     private int totalMarks;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", referencedColumnName = "id")
-    @JsonIgnore
     private Long courseId;
 
     @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL)
