@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "iam-service")
 public interface AppUserFeign {
-    @PostMapping("/register")
-    public ResponseEntity<Long> appUserRegistration(@Valid @RequestBody StudentRegistrationDto studentRegistrationDto);
+    @PostMapping("/appUser/register")
+    ResponseEntity<Long> appUserRegistration(@Valid @RequestBody StudentRegistrationDto studentRegistrationDto);
 }

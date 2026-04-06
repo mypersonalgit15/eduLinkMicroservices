@@ -20,7 +20,7 @@ public class AppUserController {
     private final IAppUserService appUserService;
     @PostMapping("/register")
     public ResponseEntity<Long> appUserRegistration(@Valid @RequestBody StudentRegistrationDto studentRegistrationDto){
-        log.info("Student's registration request has been initiated successFully by {}",studentRegistrationDto.getUserName());
+        log.info("App user registration request has been initiated successFully by {}",studentRegistrationDto.getUserName());
         return ResponseEntity.status(200).body(appUserService.appUserRegistration(studentRegistrationDto));
     }
 }
