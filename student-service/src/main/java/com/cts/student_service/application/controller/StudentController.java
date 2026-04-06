@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class StudentController {
 
-
     private final IStudentService iStudentService;
 
     @PostMapping("/register")
