@@ -19,7 +19,8 @@
 		<module>faculty-service</module>
 		<module>iam-service</module>
 		<module>student-service</module>
-	</modules>
+        <module>common-library</module>
+    </modules>
 	<packaging>pom</packaging>
 	<groupId>com.cts</groupId>
 	<artifactId>edulink</artifactId>
@@ -61,6 +62,13 @@
 				<version>${lombok.version}</version>
 				<scope>provided</scope>
 			</dependency>
+
+			<dependency>
+				<groupId>com.cts</groupId>
+				<artifactId>common-library</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
