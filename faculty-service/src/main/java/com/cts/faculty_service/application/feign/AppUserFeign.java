@@ -1,4 +1,4 @@
-package com.cts.student_service.application.feign;
+package com.cts.faculty_service.application.feign;
 
 import com.cts.dto.request.AppUserRegistrationDto;
 import jakarta.validation.Valid;
