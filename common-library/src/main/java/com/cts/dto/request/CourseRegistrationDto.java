@@ -1,8 +1,13 @@
 package com.cts.dto.request;
 
+
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class CourseRegistrationDto {
 
     @NotBlank(message = "Course title is required")
@@ -27,5 +32,3 @@ public class CourseRegistrationDto {
     @Column(unique = true ,nullable=false)
     private Long facultyId;
 }
-
-
