@@ -1,6 +1,7 @@
 package com.cts.course_service.application.repository;
 
 import com.cts.course_service.application.entity.Course;
+import com.cts.course_service.application.projection.CourseDetailProjection;
 import com.cts.course_service.application.projection.CourseProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

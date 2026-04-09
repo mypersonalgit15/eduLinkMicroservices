@@ -3,6 +3,7 @@ package com.cts.course_service.application.util;
 import com.cts.course_service.application.entity.Course;
 import com.cts.course_service.application.projection.CourseProjection;
 import com.cts.dto.request.CourseRegistrationDto;
+import com.cts.dto.response.CourseDetailByIdProjection;
 import com.cts.util.UIDGeneratorUtils;
 
 public class DtoMapper {
@@ -26,7 +27,7 @@ public class DtoMapper {
         course.setCourseGradeLevel(dto.getCourseGradeLevel());
         course.setCourseStatus("INACTIVE");
     }
-    public static CourseDetailByIdProjection courseDetailsByIdGenerator( CourseProjection courseProjection){
+    public static CourseDetailByIdProjection courseDetailsByIdGenerator(CourseProjection courseProjection){
         CourseDetailByIdProjection courseDetailByIdProjection = new CourseDetailByIdProjection();
         courseDetailByIdProjection.setCourseId(courseProjection.getCourseId());
         courseDetailByIdProjection.setCourseTitle(courseProjection.getCourseTitle());

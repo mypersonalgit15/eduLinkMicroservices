@@ -1,12 +1,21 @@
 
 package com.cts.course_service.application.service;
 
+import com.cts.classexception.CourseException;
 import com.cts.course_service.application.entity.Course;
 import com.cts.course_service.application.feign.CourseEnrollmentFeign;
+import com.cts.course_service.application.feign.FacultyFeign;
+import com.cts.course_service.application.feign.StudentFeign;
+import com.cts.course_service.application.projection.CourseDetailProjection;
+import com.cts.course_service.application.projection.CourseProjection;
 import com.cts.course_service.application.repository.CourseRepository;
+import com.cts.course_service.application.util.DtoMapper;
 import com.cts.dto.request.CourseEnrollmentDto;
 import com.cts.dto.request.CourseRegistrationDto;
-import com.cts.util.DtoMapper;
+import com.cts.dto.response.CourseDetailByIdProjection;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +32,9 @@ import java.util.Optional;
 public class CourseServiceImpl implements ICourseService{
 
 private final CourseRepository courseRepository;
+private final CourseEnrollmentFeign courseEnrollmentFeign;
+private final StudentFeign studentFeign;
+private final FacultyFeign facultyFeign;
 
     @Override
     @Transactional
@@ -152,37 +164,7 @@ private final CourseRepository courseRepository;
         return "Course updated successfully!";
     }
 
-    @Override
-    @Transactional
-    public String patchCourse(Long courseId, Map<String, Object> updates) throws CourseException{
-        log.info("Patch update initiated for Course ID: {}", courseId);
-        Course course = courseRepository.findCourseById(courseId)
-                .orElseThrow(() -> new CourseException("Course not found with ID: " + courseId, HttpStatus.NOT_FOUND));
-        updates.forEach((key, value) -> {
-            if (value != null) {
-                switch (key) {
-                    case "courseTitle":
-                        course.setCourseTitle(value.toString());
-                        break;
-                    case "courseSubject":
-                        course.setCourseSubject(value.toString());
-                        break;
-                    case "courseGradeLevel":
-                        course.setCourseGradeLevel(value.toString());
-                        break;
-                    case "courseCredit":
-                        course.setCourseCredit(Integer.parseInt(value.toString()));
-                        break;
-                    case "courseStatus":
-                        course.setCourseStatus(value.toString());
-                        break;
-                }
-            }
-        });
-        courseRepository.save(course);
-        log.info("Course ID: {} partially updated successfully", courseId);
-        return "Course partially updated successfully!";
-    }
+
 
     @Override
     @Transactional
