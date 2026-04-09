@@ -1,4 +1,4 @@
-package com.cts.projection;
+package com.cts.course_service.application.projection;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,9 +6,11 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class CourseProjection {
+    private Long courseId;
     private String courseTitle;
     private String courseSubject;
     private String courseGradeLevel;
     private int courseCredit;
     private String courseStatus;
+    private double courseRating;
 }

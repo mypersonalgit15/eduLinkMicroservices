@@ -1,8 +1,6 @@
 package com.cts.iam_service.application.util;
 
-import com.cts.dto.request.StudentRegistrationDto;
 import com.cts.iam_service.application.entity.AppUser;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class DtoMapper {
     public static AppUser appUserDtoSeparator(StudentRegistrationDto appUserDto){

@@ -1,7 +1,6 @@
 package com.cts.iam_service.application.service;
 
 import com.cts.classexception.AppUserException;
-import com.cts.dto.request.StudentRegistrationDto;
 import com.cts.iam_service.application.entity.AppUser;
 import com.cts.iam_service.application.entity.Role;
 import com.cts.iam_service.application.repository.AppUserRepository;

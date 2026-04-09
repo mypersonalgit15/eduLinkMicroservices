@@ -2,7 +2,9 @@ package com.cts.dto.request;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
+import lombok.Data;
 
+@Data
 public class CourseRegistrationDto {
 
     @NotBlank(message = "Course title is required")

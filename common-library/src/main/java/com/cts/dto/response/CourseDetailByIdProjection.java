@@ -1,10 +1,8 @@
-package com.cts.projection;
+package com.cts.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@AllArgsConstructor
-@Getter
+@Data
 public class CourseDetailByIdProjection {
     private Long courseId;
     private String courseTitle;
@@ -15,4 +13,5 @@ public class CourseDetailByIdProjection {
     private double courseRating;
     private String facultyName;
     private double facultyRating;
+    private int facultyYearOfExperience;
 }

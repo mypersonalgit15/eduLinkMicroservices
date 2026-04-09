@@ -1,40 +1,149 @@
+
 package com.cts.course_service.application.service;
 
+import com.cts.classexception.CourseException;
+
+import com.cts.course_service.application.feign.StudentFeign;
+import com.cts.dto.response.CourseDetailByIdProjection;
+import com.cts.course_service.application.projection.CourseDetailProjection;
+import com.cts.course_service.application.projection.CourseProjection;
+import com.cts.course_service.application.util.DtoMapper;
 import com.cts.course_service.application.entity.Course;
+import com.cts.course_service.application.feign.CourseEnrollmentFeign;
 import com.cts.course_service.application.repository.CourseRepository;
+import com.cts.dto.request.CourseEnrollmentDto;
 import com.cts.dto.request.CourseRegistrationDto;
-import com.cts.util.DtoMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 @Slf4j
-public class CourseServiceImpl implements ICourseService{
+public class CourseServiceImpl implements ICourseService {
 
-private final CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
+    private final CourseEnrollmentFeign courseEnrollmentFeign;
+    private final StudentFeign studentFeign;
 
-@Override
-@Transactional
-public String registerCourse(CourseRegistrationDto courseRegistrationDto) throws FacultyException {
-    log.info("Course registration has intercepted inside service");
-    Optional<Long> facultyOption = facultyRepository.findFacultyById(courseRegistrationDto.getFacultyId());
-    if (facultyOption.isEmpty()) {
-        log.error("{} is not authorized to register course", courseRegistrationDto.getFacultyId());
-        throw new FacultyException(courseRegistrationDto.getFacultyId() + " is not registered", HttpStatus.BAD_REQUEST);
+
+    @Override
+    @Transactional
+    public String updateCourse(Long courseId, CourseRegistrationDto courseRegistrationDto) {
+        log.info("Updating course details for Course ID: {}", courseId);
+        Course existingCourse = courseRepository.findCourseById(courseId)
+                .orElseThrow(() -> new CourseException("Course not found with ID: " + courseId, HttpStatus.NOT_FOUND));
+        DtoMapper.updateCourseFromDto(existingCourse, courseRegistrationDto);
+        courseRepository.save(existingCourse);
+        log.info("Course Id: {} updated successfully", courseId);
+        return "Course updated successfully!";
     }
-    Course course = DtoMapper.courseDtoSeparator(courseRegistrationDto);
-    log.error("Unable to separate faculty from courseRegistrationDto");
-    course.setCourseStatus("ACTIVE");
-    course.getFacultySet().add(facultyOption.get());
-    facultyOption.get().getCourseSet().add(course);
-    courseRepository.save(course);
-    log.info("Course with id {} saved successFully into database", course.getCourseId());
-    return "Course has registered successFully with course Id: " + course.getCourseId();
-}
 
+    @Override
+    @Transactional
+    public String patchCourse(Long courseId, Map<String, Object> updates) throws CourseException{
+        log.info("Patch update initiated for Course ID: {}", courseId);
+        Course course = courseRepository.findCourseById(courseId)
+                .orElseThrow(() -> new CourseException("Course not found with ID: " + courseId, HttpStatus.NOT_FOUND));
+        updates.forEach((key, value) -> {
+            if (value != null) {
+                switch (key) {
+                    case "courseTitle":
+                        course.setCourseTitle(value.toString());
+                        break;
+                    case "courseSubject":
+                        course.setCourseSubject(value.toString());
+                        break;
+                    case "courseGradeLevel":
+                        course.setCourseGradeLevel(value.toString());
+                        break;
+                    case "courseCredit":
+                        course.setCourseCredit(Integer.parseInt(value.toString()));
+                        break;
+                    case "courseStatus":
+                        course.setCourseStatus(value.toString());
+                        break;
+                }
+            }
+        });
+        courseRepository.save(course);
+        log.info("Course ID: {} partially updated successfully", courseId);
+        return "Course partially updated successfully!";
+    }
+
+    @Override
+    @Transactional
+    public String deleteCourse(Long courseId) {
+        log.info("Deletion request initiated for Course ID: {}", courseId);
+        Course course = courseRepository.findCourseById(courseId)
+                .orElseThrow(() -> new CourseException("Course not found with ID: " + courseId, HttpStatus.NOT_FOUND));
+        course.setCourseStatus("INACTIVE");
+        log.info("Course Id: {} deleted successfully", courseId);
+        return "Course deleted successfully with Id : "+courseId;
+    }
+
+    @Override
+    public CourseDetailByIdProjection findCourseDetailsById(Long courseId) throws CourseException {
+        log.info("Fetching details for courseId: {}", courseId);
+        log.debug("Calling faculty-course-enrollment-feign to get facultyId for courseId: {}", courseId);
+//        Long facultyId = courseEnrollmentFeign.findFacultyIdByCourseId(courseId);
+//        log.debug("Calling faculty-feign to get details for facultyId: {}", facultyId);
+//        FacultyDetailProjection facultyDetailProjection = facultyFeign.getFacultyDetailsByFacultyId(facultyId);
+        log.debug("Querying course repository for courseId: {}", courseId);
+        Optional<CourseProjection> courseProjection = courseRepository.findByCourseId(courseId);
+        if(courseProjection.isEmpty()){
+            log.error("Course lookup failed: CourseId {} not found in database", courseId);
+            throw new CourseException("Course is not registered", HttpStatus.NOT_FOUND);
+        }
+        CourseDetailByIdProjection courseDetailByIdProjection = DtoMapper.courseDetailsByIdGenerator(courseProjection.get());
+        log.info("Successfully retrieved and mapped details for courseId: {}", courseId);
+        return courseDetailByIdProjection;
+    }
+
+    @Transactional
+    public String courseEnrollmentRequest(CourseEnrollmentDto courseEnrollmentDto) throws CourseException {
+        log.info("Received enrollment request: Student ID {} for Course ID {}", courseEnrollmentDto.getStudentId(), courseEnrollmentDto.getCourseId());
+        studentFeign.checkStudentExistByStudentId(courseEnrollmentDto.getStudentId());
+        Optional<Course> course = courseRepository.findCourseById(courseEnrollmentDto.getCourseId());
+        if (course.isEmpty()) {
+            log.error("Enrollment failed: Course ID {} not found", courseEnrollmentDto.getCourseId());
+            throw new CourseException("Invalid course id: " + courseEnrollmentDto.getCourseId(), HttpStatus.BAD_REQUEST);
+        }
+        courseEnrollmentFeign.assignCourseToStudent(courseEnrollmentDto.getStudentId(), courseEnrollmentDto.getCourseId());
+        log.info("Successfully enrolled Student ID {} into Course ID {}", courseEnrollmentDto.getStudentId(), courseEnrollmentDto.getCourseId());
+        return "Enrolled SuccessFull!";
+    }
+
+
+
+    @Override
+    public List<CourseDetailProjection> findCourseListByStudentId(Long studentId) throws CourseException {
+        log.info("Fetching course list for student ID: {}", studentId);
+
+        studentFeign.checkStudentExistByStudentId(studentId);
+        List<Long> courseIdList = courseEnrollmentFeign.getCoursesListByStudentId(studentId);
+        List<CourseDetailProjection> courseDetailProjections = new ArrayList<>();
+        for(Long courseId : courseIdList){
+            Optional<CourseDetailProjection> courseDetail = courseRepository.findCourseListByCourseId(courseId);
+            if(courseDetail.isEmpty()){
+                log.warn("Course details not found for course ID: {}", courseId);
+            }else {
+                log.info("Course details found for course ID: {}", courseId);
+                courseDetailProjections.add(courseDetail.get());
+            }
+        }
+        if (courseDetailProjections.isEmpty()) {
+            log.warn("No courses found for student ID: {}", studentId);
+            throw new CourseException("No course available for student id: " + studentId, HttpStatus.NOT_FOUND);
+        }
+        log.info("Successfully retrieved {} courses for student ID: {}", courseDetailProjections.size(), studentId);
+        return courseDetailProjections;
+    }
 }

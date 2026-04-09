@@ -1,6 +1,5 @@
 package com.cts.student_service.application.controller;
 
-import com.cts.dto.request.StudentRegistrationDto;
 import com.cts.student_service.application.service.IStudentService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

@@ -1,0 +1,31 @@
+package com.cts.course_service.application.util;
+
+import com.cts.course_service.application.entity.Course;
+import com.cts.course_service.application.projection.CourseProjection;
+import com.cts.dto.request.CourseRegistrationDto;
+import com.cts.dto.response.CourseDetailByIdProjection;
+import com.cts.util.UIDGeneratorUtils;
+
+public class DtoMapper {
+
+    public static void updateCourseFromDto(Course course, CourseRegistrationDto dto) {
+        course.setCourseTitle(dto.getCourseTitle());
+        course.setCourseSubject(dto.getCourseSubject());
+        course.setCourseCredit(dto.getCourseCredit());
+        course.setCourseGradeLevel(dto.getCourseGradeLevel());
+        course.setCourseStatus("INACTIVE");
+    }
+    public static CourseDetailByIdProjection courseDetailsByIdGenerator( CourseProjection courseProjection){
+        CourseDetailByIdProjection courseDetailByIdProjection = new CourseDetailByIdProjection();
+        courseDetailByIdProjection.setCourseId(courseProjection.getCourseId());
+        courseDetailByIdProjection.setCourseTitle(courseProjection.getCourseTitle());
+        courseDetailByIdProjection.setCourseSubject(courseProjection.getCourseSubject());
+        courseDetailByIdProjection.setCourseGradeLevel(courseProjection.getCourseGradeLevel());
+        courseDetailByIdProjection.setCourseCredit(courseProjection.getCourseCredit());
+        courseDetailByIdProjection.setCourseStatus(courseProjection.getCourseStatus());
+        courseDetailByIdProjection.setCourseRating(courseProjection.getCourseRating());
+
+        return courseDetailByIdProjection;
+
+    }
+}

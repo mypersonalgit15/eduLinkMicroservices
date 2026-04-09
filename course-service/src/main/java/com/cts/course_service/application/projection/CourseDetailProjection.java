@@ -1,4 +1,4 @@
-package com.cts.projection;
+package com.cts.course_service.application.projection;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
