@@ -1,6 +1,6 @@
 package com.cts.student_service.application.feign;
 
-import com.cts.dto.StudentRegistrationDto;
+import com.cts.dto.request.StudentRegistrationDto;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;

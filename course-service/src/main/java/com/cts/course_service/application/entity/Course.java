@@ -1,9 +1,11 @@
 package com.cts.course_service.application.entity;
-
+import com.cts.util.DtoMapper;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -22,7 +24,12 @@ public class Course {
     private String courseStatus;
     private double courseRating;
     private Long totalCourseRatingCount;
-    @OneToMany(mappedBy = "course")
+
+    private Long facultyId;
+
+    @ElementCollection
+    private Set<Long> studentId = new HashSet<>();
+    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
     private List<LearningMaterial> learningMaterialList;
 
 }

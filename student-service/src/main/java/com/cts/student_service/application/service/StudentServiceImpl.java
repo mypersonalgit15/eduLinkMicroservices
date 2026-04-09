@@ -1,6 +1,6 @@
 package com.cts.student_service.application.service;
 
-import com.cts.dto.StudentRegistrationDto;
+import com.cts.dto.request.StudentRegistrationDto;
 import com.cts.student_service.application.entity.Student;
 import com.cts.classexception.StudentException;
 import com.cts.student_service.application.feign.AppUserFeign;
