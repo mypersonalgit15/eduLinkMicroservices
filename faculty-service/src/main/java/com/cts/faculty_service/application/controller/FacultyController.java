@@ -24,7 +24,7 @@ public class FacultyController {
         return ResponseEntity.status(200).body(facultyService.registerFaculty(facultyRegistrationDto));
     }
 
-    @GetMapping("/checkFacultyByFacultyId/{facultyId}")
+    @GetMapping("/checkFacultyExistByFacultyId/{facultyId}")
     public void checkFacultyByFacultyId(@PathVariable Long facultyId){
         log.info("Request has been initiated to get Faculty details by facultyId {}",facultyId);
         facultyService.checkFacultyExistByFacultyId(facultyId);
