@@ -1,6 +1,7 @@
 package com.cts.dto.request;
 
 
+
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class StudentRegistrationDto {
+public class StudentRegistrationDto implements IUserRegistration {
 
     @NotBlank(message = "Name is required")
     private String userName;
@@ -45,4 +46,3 @@ public class StudentRegistrationDto {
 //            message = "Password must contain at least one uppercase, one lowercase, one digit, and one special character")
 //    private String password;
 }
-

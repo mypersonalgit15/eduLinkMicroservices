@@ -4,11 +4,10 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class FacultyCourseEnrollmentException extends RuntimeException {
-
+public class FacultyCourseEnrollmentException extends RuntimeException{
     private final HttpStatus httpStatus;
     public FacultyCourseEnrollmentException(String message, HttpStatus httpStatus){
         super(message);
-        this.httpStatus = httpStatus;
+        this.httpStatus=httpStatus;
     }
 }
