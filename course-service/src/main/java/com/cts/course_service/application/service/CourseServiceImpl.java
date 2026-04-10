@@ -14,6 +14,7 @@ import com.cts.dto.request.CourseEnrollmentDto;
 import com.cts.dto.request.CourseRegistrationDto;
 import com.cts.dto.response.CourseDetailByIdProjection;
 
+import com.cts.dto.response.FacultyDetailProjection;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
@@ -83,9 +84,9 @@ private final FacultyFeign facultyFeign;
     public CourseDetailByIdProjection findCourseDetailsById(Long courseId) throws CourseException {
         log.info("Fetching details for courseId: {}", courseId);
         log.debug("Calling faculty-course-enrollment-feign to get facultyId for courseId: {}", courseId);
-//        Long facultyId = courseEnrollmentFeign.findFacultyIdByCourseId(courseId);
-//        log.debug("Calling faculty-feign to get details for facultyId: {}", facultyId);
-//        FacultyDetailProjection facultyDetailProjection = facultyFeign.getFacultyDetailsByFacultyId(facultyId);
+        Long facultyId = courseEnrollmentFeign.findFacultyIdByCourseId(courseId);
+        log.debug("Calling faculty-feign to get details for facultyId: {}", facultyId);
+        FacultyDetailProjection facultyDetailProjection = facultyFeign.getFacultyDetailsByFacultyId(facultyId);
         log.debug("Querying course repository for courseId: {}", courseId);
         Optional<CourseProjection> courseProjection = courseRepository.findByCourseId(courseId);
         if(courseProjection.isEmpty()){
