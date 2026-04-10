@@ -37,7 +37,6 @@ public class FacultyCourseEnrollmentServiceImpl implements IFacultyCourseEnrollm
         log.info("Assigning course with ID {} to faculty with ID {}", courseId, facultyId);
         FacultyCourseAssignment facultyCourseAssignment = DtoMapper.mapToFacultyCourseAssignment(facultyId, courseId);
         facultyCourseEnrollmentRepository.save(facultyCourseAssignment);
-        facultyCourseEnrollmentRepository.assignCourseToFaculty(facultyId, courseId);
         log.info("Successfully assigned course with ID {} to faculty with ID {}", courseId, facultyId);
     }
 

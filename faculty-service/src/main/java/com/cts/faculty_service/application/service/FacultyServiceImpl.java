@@ -7,7 +7,6 @@ import com.cts.dto.response.CourseProjection;
 import com.cts.dto.response.FacultyDetailProjection;
 import com.cts.faculty_service.application.entity.Faculty;
 import com.cts.faculty_service.application.feign.AppUserFeign;
-import com.cts.faculty_service.application.feign.CourseFeign;
 import com.cts.faculty_service.application.projection.FacultyDetail;
 import com.cts.faculty_service.application.repository.FacultyRepository;
 import com.cts.faculty_service.application.util.DtoMapper;
