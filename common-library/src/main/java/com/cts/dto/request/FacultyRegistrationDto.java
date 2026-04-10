@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class FacultyRegistrationDto {
+public class FacultyRegistrationDto implements IUserRegistration{
 
     @NotBlank(message = "Username is required")
     private String userName;

@@ -13,9 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course,Long> {
-    @Query(" select new com.cts.course_service.application.projection.CourseProjection(c.courseId, c.courseTitle," +
-            " c.courseSubject,c.courseGradeLevel,c.courseCredit,c.courseStatus,c.courseRating) from Course c where c.courseStatus='ACTIVE'")
-    List<CourseProjection> findAllAvailableCourse();
 
     @Query("SELECT new com.cts.course_service.application.projection.CourseProjection(c.courseId, c.courseTitle," +
             " c.courseSubject,c.courseGradeLevel,c.courseCredit,c.courseStatus,c.courseRating) FROM Course c where c.courseId = :courseId")
@@ -32,4 +29,5 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
             " c.courseGradeLevel,c.courseRating) from Course c where c.courseId = :courseId")
     Optional<CourseDetailProjection> findCourseListByCourseId(@Param("courseId") Long courseId);
 
+    boolean existsByCourseId(Long courseId);
 }
