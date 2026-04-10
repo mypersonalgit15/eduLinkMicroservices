@@ -27,7 +27,7 @@ public class StudentCourseEnrollmentServiceImpl implements IStudentCourseEnrollm
             log.warn("Student with ID {} is already enrolled in course with ID {}", studentId, courseId);
             throw new StudentCourseEnrollmentException("Student is already enrolled in this course.", HttpStatus.CONFLICT);
         }
-        StudentCourseEnrollment studentCourseEnrollment = DtoMapper.mapToStudentCourseAssignment(courseId,studentId);
+        StudentCourseEnrollment studentCourseEnrollment = DtoMapper.mapToStudentCourseAssignment(courseId, studentId);
         studentCourseEnrollmentRepository.save(studentCourseEnrollment);
         log.info("Successfully assigned course with ID {} to student with ID {}", courseId, studentId);
 
