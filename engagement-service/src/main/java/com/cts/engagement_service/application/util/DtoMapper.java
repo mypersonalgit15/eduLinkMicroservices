@@ -8,7 +8,6 @@ public class DtoMapper {
         FeedBack feedBack = new FeedBack();
         feedBack.setMessage(feedbackDto.getComment());
         feedBack.setRating(feedbackDto.getRating());
-        feedBack.setAppUserId(feedbackDto.getAppUserId());
         return feedBack;
     }
 }
