@@ -1,20 +1,19 @@
-
 package com.cts.course_service.application.service;
 
 import com.cts.classexception.CourseException;
-import com.cts.course_service.application.entity.Course;
-import com.cts.course_service.application.feign.CourseEnrollmentFeign;
 import com.cts.course_service.application.feign.FacultyFeign;
 import com.cts.course_service.application.feign.StudentFeign;
+import com.cts.dto.response.CourseDetailByIdProjection;
 import com.cts.course_service.application.projection.CourseDetailProjection;
-import com.cts.course_service.application.projection.CourseProjection;
-import com.cts.course_service.application.repository.CourseRepository;
+import com.cts.dto.response.CourseProjection;
 import com.cts.course_service.application.util.DtoMapper;
+import com.cts.course_service.application.entity.Course;
+import com.cts.course_service.application.feign.CourseEnrollmentFeign;
+import com.cts.course_service.application.repository.CourseRepository;
 import com.cts.dto.request.CourseEnrollmentDto;
 import com.cts.dto.request.CourseRegistrationDto;
-import com.cts.dto.response.CourseDetailByIdProjection;
-
 import com.cts.dto.response.FacultyDetailProjection;
+import com.cts.util.RatingCalculator;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
@@ -27,15 +26,62 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 @Slf4j
-public class CourseServiceImpl implements ICourseService{
+public class CourseServiceImpl implements ICourseService {
 
-private final CourseRepository courseRepository;
-private final CourseEnrollmentFeign courseEnrollmentFeign;
-private final StudentFeign studentFeign;
-private final FacultyFeign facultyFeign;
+    private final CourseRepository courseRepository;
+    private final CourseEnrollmentFeign courseEnrollmentFeign;
+    private final FacultyFeign facultyFeign;
+    private final StudentFeign studentFeign;
+
+
+    @Override
+    @Transactional
+    @CircuitBreaker(name = "courseRegister", fallbackMethod = "fallbackRegisterCourse")
+    @Retry(name = "courseRegister")
+    public String registerCourse(CourseRegistrationDto courseRegistrationDto) {
+        log.info("Course registration has intercepted inside service");
+        facultyFeign.checkFacultyByFacultyId(courseRegistrationDto.getFacultyId());
+        Course course = DtoMapper.courseDtoSeparator(courseRegistrationDto);
+        log.error("Unable to separate faculty from courseRegistrationDto");
+        course.setCourseStatus("ACTIVE");
+        courseEnrollmentFeign.assignCourseToFaculty(courseRegistrationDto.getFacultyId(), course.getCourseId());
+        courseRepository.save(course);
+        log.info("Course with id {} saved successFully into database", course.getCourseId());
+        return "Course has registered successFully with course Id: " + course.getCourseId();
+    }
+
+    @Override
+    public void checkCourseExistByCourseId(Long courseId) {
+        log.info("Checking existence of course with ID: {}", courseId);
+        boolean exists = courseRepository.existsByCourseId(courseId);
+        if (!exists) {
+            log.warn("Course with ID {} does not exist", courseId);
+            throw new CourseException("Course is not registered with id: " + courseId, HttpStatus.NOT_FOUND);
+        }
+        log.info("Course with ID {} exists", courseId);
+    }
+    @Override
+    public String findCourseTitleByCourseId(Long courseId) {
+        this.checkCourseExistByCourseId(courseId);
+        String courseName = courseRepository.findCourseTitleByCourseId(courseId);
+        log.info("Course name for course ID {} is '{}'", courseId, courseName);
+        return courseName;
+    }
+    @Override
+    @Transactional
+    public String updateCourse(Long courseId, CourseRegistrationDto courseRegistrationDto) {
+        log.info("Updating course details for Course ID: {}", courseId);
+        Course existingCourse = courseRepository.findCourseById(courseId)
+                .orElseThrow(() -> new CourseException("Course not found with ID: " + courseId, HttpStatus.NOT_FOUND));
+        DtoMapper.updateCourseFromDto(existingCourse, courseRegistrationDto);
+        courseRepository.save(existingCourse);
+        log.info("Course Id: {} updated successfully", courseId);
+        return "Course updated successfully!";
+    }
 
     @Override
     @Transactional
@@ -80,6 +126,8 @@ private final FacultyFeign facultyFeign;
         return "Course deleted successfully with Id : "+courseId;
     }
 
+
+
     @Override
     public CourseDetailByIdProjection findCourseDetailsById(Long courseId) throws CourseException {
         log.info("Fetching details for courseId: {}", courseId);
@@ -88,12 +136,12 @@ private final FacultyFeign facultyFeign;
         log.debug("Calling faculty-feign to get details for facultyId: {}", facultyId);
         FacultyDetailProjection facultyDetailProjection = facultyFeign.getFacultyDetailsByFacultyId(facultyId);
         log.debug("Querying course repository for courseId: {}", courseId);
-        Optional<CourseProjection> courseProjection = courseRepository.findByCourseId(courseId);
+        Optional<com.cts.dto.response.CourseProjection> courseProjection = courseRepository.findByCourseId(courseId);
         if(courseProjection.isEmpty()){
             log.error("Course lookup failed: CourseId {} not found in database", courseId);
             throw new CourseException("Course is not registered", HttpStatus.NOT_FOUND);
         }
-        CourseDetailByIdProjection courseDetailByIdProjection = DtoMapper.courseDetailsByIdGenerator(courseProjection.get());
+        CourseDetailByIdProjection courseDetailByIdProjection = DtoMapper.courseDetailsByIdGenerator(facultyDetailProjection,courseProjection.get());
         log.info("Successfully retrieved and mapped details for courseId: {}", courseId);
         return courseDetailByIdProjection;
     }
@@ -111,23 +159,23 @@ private final FacultyFeign facultyFeign;
         log.info("Successfully enrolled Student ID {} into Course ID {}", courseEnrollmentDto.getStudentId(), courseEnrollmentDto.getCourseId());
         return "Enrolled SuccessFull!";
     }
-    @Override
-    @Transactional
-    @CircuitBreaker(name = "courseRegister", fallbackMethod = "fallbackRegisterCourse")
-    @Retry(name = "courseRegister")
-    public String registerCourse(CourseRegistrationDto courseRegistrationDto) {
-        log.info("Course registration has intercepted inside service");
-        facultyFeign.checkFacultyByFacultyId(courseRegistrationDto.getFacultyId());
-        Course course = DtoMapper.courseDtoSeparator(courseRegistrationDto);
-        log.error("Unable to separate faculty from courseRegistrationDto");
-        course.setCourseStatus("ACTIVE");
-        courseEnrollmentFeign.assignCourseToFaculty(courseRegistrationDto.getFacultyId(), course.getCourseId());
-        courseRepository.save(course);
-        log.info("Course with id {} saved successFully into database", course.getCourseId());
-        return "Course has registered successFully with course Id: " + course.getCourseId();
-    }
 
-
+//    @Override
+//    @Transactional
+//    public String updateCourseRating(Long courseId, double newCourseRating) throws CourseException {
+//        log.info("Updating rating for course ID: {} with new rating: {}", courseId, newCourseRating);
+//        Optional<Course> course = courseRepository.findCourseById(courseId);
+//        if (course.isEmpty()) {
+//            log.error("Course not found with ID: {}", courseId);
+//            throw new CourseException("Course is not registered", HttpStatus.NOT_FOUND);
+//        }
+//        double newRating = RatingCalculator.calculateRating(course.get().getCourseRating(), newCourseRating, course.get().getTotalCourseRatingCount());
+//        course.get().setTotalCourseRatingCount(course.get().getTotalCourseRatingCount() + 1);
+//        course.get().setCourseRating(newRating);
+//        log.info("Course {} updated. New Rating: {}, Total Reviews: {}",
+//                courseId, newRating, course.get().getTotalCourseRatingCount());
+//        return "Thanks for you feedBack!";
+//    }
 
     @Override
     public List<CourseDetailProjection> findCourseListByStudentId(Long studentId) throws CourseException {
@@ -154,22 +202,6 @@ private final FacultyFeign facultyFeign;
     }
 
     @Override
-    @Transactional
-    public String updateCourse(Long courseId, CourseRegistrationDto courseRegistrationDto) {
-        log.info("Updating course details for Course ID: {}", courseId);
-        Course existingCourse = courseRepository.findCourseById(courseId)
-                .orElseThrow(() -> new CourseException("Course not found with ID: " + courseId, HttpStatus.NOT_FOUND));
-        DtoMapper.updateCourseFromDto(existingCourse, courseRegistrationDto);
-        courseRepository.save(existingCourse);
-        log.info("Course Id: {} updated successfully", courseId);
-        return "Course updated successfully!";
-    }
-
-
-
-
-
-    @Override
     public List<CourseProjection> getCoursesByFaculty(Long facultyId) {
         List<Long> courseIdList = courseEnrollmentFeign.getCoursesListByFacultyId(facultyId);
         List<CourseProjection> courseProjection = new ArrayList<>();
@@ -191,4 +223,8 @@ private final FacultyFeign facultyFeign;
         return count;
     }
 
+    public String fallbackRegisterCourse(CourseRegistrationDto dto, Throwable t) {
+        log.error("Fallback triggered for course '{}'. Reason: {}", dto.getCourseTitle(), t.getMessage());
+        return "Registration is temporarily unavailable. Please try again later. Error: " + t.getMessage();
+    }
 }

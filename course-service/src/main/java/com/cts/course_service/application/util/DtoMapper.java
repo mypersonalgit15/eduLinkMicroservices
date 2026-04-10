@@ -2,9 +2,10 @@ package com.cts.course_service.application.util;
 
 import com.cts.course_service.application.entity.Course;
 import com.cts.course_service.application.entity.LearningMaterial;
-import com.cts.course_service.application.projection.CourseProjection;
 import com.cts.dto.request.CourseRegistrationDto;
 import com.cts.dto.response.CourseDetailByIdProjection;
+import com.cts.dto.response.CourseProjection;
+import com.cts.dto.response.FacultyDetailProjection;
 import com.cts.util.UIDGeneratorUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +34,7 @@ public class DtoMapper {
         course.setCourseGradeLevel(dto.getCourseGradeLevel());
         course.setCourseStatus("INACTIVE");
     }
-    public static CourseDetailByIdProjection courseDetailsByIdGenerator(CourseProjection courseProjection){
+    public static CourseDetailByIdProjection courseDetailsByIdGenerator(FacultyDetailProjection facultyDetailProjection , CourseProjection courseProjection){
         CourseDetailByIdProjection courseDetailByIdProjection = new CourseDetailByIdProjection();
         courseDetailByIdProjection.setCourseId(courseProjection.getCourseId());
         courseDetailByIdProjection.setCourseTitle(courseProjection.getCourseTitle());
@@ -42,9 +43,10 @@ public class DtoMapper {
         courseDetailByIdProjection.setCourseCredit(courseProjection.getCourseCredit());
         courseDetailByIdProjection.setCourseStatus(courseProjection.getCourseStatus());
         courseDetailByIdProjection.setCourseRating(courseProjection.getCourseRating());
-
+        courseDetailByIdProjection.setFacultyName(facultyDetailProjection.getFacultyName());
+        courseDetailByIdProjection.setFacultyRating(facultyDetailProjection.getFacultyRating());
+        courseDetailByIdProjection.setFacultyYearOfExperience(facultyDetailProjection.getFacultyYearOfExperience());
         return courseDetailByIdProjection;
-
     }
 
     public static LearningMaterial learningMaterialDtoSeparator(com.cts.dto.request.LearningMaterialRegistrationDto dto) throws IOException {
@@ -68,6 +70,7 @@ public class DtoMapper {
 
         return learningMaterial;
     }
+
 
 
 }

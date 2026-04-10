@@ -4,8 +4,8 @@ import com.cts.course_service.application.service.ICourseService;
 import com.cts.dto.request.CourseEnrollmentDto;
 import com.cts.dto.request.CourseRegistrationDto;
 import com.cts.course_service.application.projection.CourseDetailProjection;
-import com.cts.course_service.application.projection.CourseProjection;
 import com.cts.dto.response.CourseDetailByIdProjection;
+import com.cts.dto.response.CourseProjection;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,10 @@ public class CourseController {
         log.info("{} request for a new course registration",courseRegistrationDto.getFacultyId());
         return  ResponseEntity.status(200).body(iCourseService.registerCourse(courseRegistrationDto));
     }
-
+    @GetMapping("/checkCourseExistByCourseId/{courseId}")
+    public void checkCourseExistByCourseId(@Valid @PathVariable Long courseId){
+        iCourseService.checkCourseExistByCourseId(courseId);
+    }
     @GetMapping("/getCoursesByFacultyId/{facultyId}")
     public ResponseEntity<List<CourseProjection>> getCoursesByFaculty(@Valid @PathVariable Long facultyId) {
         return ResponseEntity.status(200).body(iCourseService.getCoursesByFaculty(facultyId));
