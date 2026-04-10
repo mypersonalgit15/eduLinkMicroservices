@@ -1,8 +1,9 @@
+
 package com.cts.iam_service.application.service;
 
 import com.cts.classexception.AppUserException;
 import com.cts.dto.request.AppUserRegistrationDto;
-import com.cts.dto.request.StudentRegistrationDto;
+import com.cts.dto.response.AppUserDetailByIdDto;
 import com.cts.iam_service.application.entity.AppUser;
 import com.cts.iam_service.application.entity.Role;
 import com.cts.iam_service.application.repository.AppUserRepository;
@@ -55,9 +56,30 @@ public class AppUserServiceImpl implements IAppUserService{
         log.info("AppUser registration successful for email {}",appUser.getUserEmail());
         return appUser.getId();
     }
-    public Long appUserFallback(StudentRegistrationDto studentRegistrationDto, Throwable t) throws AppUserException {
+
+    @Override
+    public String findAppUserNameByAppUserId(Long appUserId) throws AppUserException {
+        Optional<AppUser> appUser = appUserRepository.findById(appUserId);
+        if(appUser.isEmpty()){
+            log.error("AppUser not found for ID: {}", appUserId);
+            throw new AppUserException("AppUser not found for ID: " + appUserId, HttpStatus.NOT_FOUND);
+        }
+        return appUser.get().getUserName();
+    }
+
+    @Override
+    public AppUserDetailByIdDto findAppUserDetailsByAppUserId(Long appUserId) throws AppUserException{
+        Optional<AppUser> appUser = appUserRepository.findById(appUserId);
+        if(appUser.isEmpty()){
+            log.error("AppUser not found for Id: {}", appUserId);
+            throw new AppUserException("AppUser not found for ID: " + appUserId, HttpStatus.NOT_FOUND);
+        }
+        return DtoMapper.appUserToAppUserDetailById(appUser.get());
+    }
+
+    public Long appUserFallback(AppUserRegistrationDto appUserRegistrationDto, Throwable t) throws AppUserException {
         log.error("AppUser Fallback triggered for {}. Reason: {}",
-                studentRegistrationDto.getUserEmail(), t.getMessage());
+                appUserRegistrationDto.getUserEmail(), t.getMessage());
         if (t instanceof AppUserException) {
             throw (AppUserException) t;
         }

@@ -1,17 +1,23 @@
+
 package com.cts.course_service.application.service;
 
 import com.cts.classexception.CourseException;
+import com.cts.course_service.application.entity.Course;
+import com.cts.course_service.application.feign.CourseEnrollmentFeign;
 import com.cts.course_service.application.feign.FacultyFeign;
 import com.cts.course_service.application.feign.StudentFeign;
 import com.cts.dto.response.CourseDetailByIdProjection;
 import com.cts.course_service.application.projection.CourseDetailProjection;
-import com.cts.dto.response.CourseProjection;
+import com.cts.course_service.application.projection.CourseProjection;
+import com.cts.course_service.application.repository.CourseRepository;
 import com.cts.course_service.application.util.DtoMapper;
 import com.cts.course_service.application.entity.Course;
 import com.cts.course_service.application.feign.CourseEnrollmentFeign;
 import com.cts.course_service.application.repository.CourseRepository;
 import com.cts.dto.request.CourseEnrollmentDto;
 import com.cts.dto.request.CourseRegistrationDto;
+import com.cts.dto.response.CourseDetailByIdProjection;
+
 import com.cts.dto.response.FacultyDetailProjection;
 import com.cts.util.RatingCalculator;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -30,7 +36,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class CourseServiceImpl implements ICourseService {
+public class CourseServiceImpl implements ICourseService{
 
     private final CourseRepository courseRepository;
     private final CourseEnrollmentFeign courseEnrollmentFeign;
@@ -126,8 +132,6 @@ public class CourseServiceImpl implements ICourseService {
         return "Course deleted successfully with Id : "+courseId;
     }
 
-
-
     @Override
     public CourseDetailByIdProjection findCourseDetailsById(Long courseId) throws CourseException {
         log.info("Fetching details for courseId: {}", courseId);
@@ -158,6 +162,21 @@ public class CourseServiceImpl implements ICourseService {
         courseEnrollmentFeign.assignCourseToStudent(courseEnrollmentDto.getStudentId(), courseEnrollmentDto.getCourseId());
         log.info("Successfully enrolled Student ID {} into Course ID {}", courseEnrollmentDto.getStudentId(), courseEnrollmentDto.getCourseId());
         return "Enrolled SuccessFull!";
+    }
+    @Override
+    @Transactional
+    @CircuitBreaker(name = "courseRegister", fallbackMethod = "fallbackRegisterCourse")
+    @Retry(name = "courseRegister")
+    public String registerCourse(CourseRegistrationDto courseRegistrationDto) {
+        log.info("Course registration has intercepted inside service");
+        facultyFeign.checkFacultyByFacultyId(courseRegistrationDto.getFacultyId());
+        Course course = DtoMapper.courseDtoSeparator(courseRegistrationDto);
+        log.error("Unable to separate faculty from courseRegistrationDto");
+        course.setCourseStatus("ACTIVE");
+        courseEnrollmentFeign.assignCourseToFaculty(courseRegistrationDto.getFacultyId(), course.getCourseId());
+        courseRepository.save(course);
+        log.info("Course with id {} saved successFully into database", course.getCourseId());
+        return "Course has registered successFully with course Id: " + course.getCourseId();
     }
 
 //    @Override
@@ -200,6 +219,22 @@ public class CourseServiceImpl implements ICourseService {
         log.info("Successfully retrieved {} courses for student ID: {}", courseDetailProjections.size(), studentId);
         return courseDetailProjections;
     }
+
+    @Override
+    @Transactional
+    public String updateCourse(Long courseId, CourseRegistrationDto courseRegistrationDto) {
+        log.info("Updating course details for Course ID: {}", courseId);
+        Course existingCourse = courseRepository.findCourseById(courseId)
+                .orElseThrow(() -> new CourseException("Course not found with ID: " + courseId, HttpStatus.NOT_FOUND));
+        DtoMapper.updateCourseFromDto(existingCourse, courseRegistrationDto);
+        courseRepository.save(existingCourse);
+        log.info("Course Id: {} updated successfully", courseId);
+        return "Course updated successfully!";
+    }
+
+
+
+
 
     @Override
     public List<CourseProjection> getCoursesByFaculty(Long facultyId) {
