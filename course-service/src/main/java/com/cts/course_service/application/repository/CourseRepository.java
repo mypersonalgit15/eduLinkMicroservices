@@ -28,8 +28,8 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
     @Query("select c from Course c where c.courseId = :courseId")
     Optional<Course> findCourseById(@Param("courseId") Long courseId);
 
-    @Query(" select new com.cts.eduLink.application.projection.CourseDetailProjection(c.courseTitle," +
-            "c.courseGradeLevel,c.courseRating) from Course c inner join c.studentSet s where s.studentId = :studentId")
-    List<CourseDetailProjection> findCourseListByStudentId(@Param("studentId") Long studentId);
+    @Query(" select new com.cts.course_service.application.projection.CourseDetailProjection(c.courseTitle," +
+            " c.courseGradeLevel,c.courseRating) from Course c where c.courseId = :courseId")
+    Optional<CourseDetailProjection> findCourseListByCourseId(@Param("courseId") Long courseId);
 
 }
