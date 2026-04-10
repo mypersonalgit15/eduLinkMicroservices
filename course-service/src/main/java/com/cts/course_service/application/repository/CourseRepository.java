@@ -13,9 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course,Long> {
-    @Query(" select new com.cts.course_service.application.projection.CourseProjection(c.courseId, c.courseTitle," +
-            " c.courseSubject,c.courseGradeLevel,c.courseCredit,c.courseStatus,c.courseRating) from Course c where c.courseStatus='ACTIVE'")
-    List<CourseProjection> findAllAvailableCourse();
 
     @Query("SELECT new com.cts.course_service.application.projection.CourseProjection(c.courseId, c.courseTitle," +
             " c.courseSubject,c.courseGradeLevel,c.courseCredit,c.courseStatus,c.courseRating) FROM Course c where c.courseId = :courseId")
@@ -28,8 +25,9 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
     @Query("select c from Course c where c.courseId = :courseId")
     Optional<Course> findCourseById(@Param("courseId") Long courseId);
 
-    @Query(" select new com.cts.eduLink.application.projection.CourseDetailProjection(c.courseTitle," +
-            "c.courseGradeLevel,c.courseRating) from Course c inner join c.studentSet s where s.studentId = :studentId")
-    List<CourseDetailProjection> findCourseListByStudentId(@Param("studentId") Long studentId);
+    @Query(" select new com.cts.course_service.application.projection.CourseDetailProjection(c.courseTitle," +
+            " c.courseGradeLevel,c.courseRating) from Course c where c.courseId = :courseId")
+    Optional<CourseDetailProjection> findCourseListByCourseId(@Param("courseId") Long courseId);
 
+    boolean existsByCourseId(Long courseId);
 }

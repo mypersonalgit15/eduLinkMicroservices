@@ -1,6 +1,6 @@
 package com.cts.student_service.application.feign;
 
-import com.cts.dto.request.StudentRegistrationDto;
+import com.cts.dto.request.AppUserRegistrationDto;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "iam-service")
 public interface AppUserFeign {
     @PostMapping("/appUser/register")
-    ResponseEntity<Long> appUserRegistration(@Valid @RequestBody StudentRegistrationDto studentRegistrationDto);
+    ResponseEntity<Long> appUserRegistration(@Valid @RequestBody AppUserRegistrationDto appUserRegistrationDto);
 }

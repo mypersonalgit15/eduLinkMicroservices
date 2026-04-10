@@ -5,16 +5,15 @@ import com.cts.course_service.application.projection.CourseProjection;
 import com.cts.dto.request.CourseEnrollmentDto;
 import com.cts.dto.request.CourseRegistrationDto;
 import com.cts.dto.response.CourseDetailByIdProjection;
-import com.cts.projection.CourseDetailByIdProjection;
-import com.cts.projection.CourseDetailProjection;
-import com.cts.projection.CourseProjection;
+
+import com.cts.course_service.application.projection.CourseDetailProjection;
+import com.cts.course_service.application.projection.CourseProjection;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ICourseService {
     String registerCourse(CourseRegistrationDto courseRegistrationDto);
-    List<CourseProjection> findAllAvailableCourse();
     String updateCourse(Long courseId, CourseRegistrationDto courseRegistrationDto);
     String patchCourse(Long courseId, Map<String, Object> updates);
     String deleteCourse(Long courseId);
@@ -22,6 +21,5 @@ public interface ICourseService {
     public int getFacultyCourseCount(Long facultyId );
     CourseDetailByIdProjection findCourseDetailsById(Long courseId);
     String courseEnrollmentRequest(CourseEnrollmentDto courseEnrollmentDto);
-    String updateCourseRating(Long courseId, double newCourseRating);
     List<CourseDetailProjection> findCourseListByStudentId(Long studentId);
 }

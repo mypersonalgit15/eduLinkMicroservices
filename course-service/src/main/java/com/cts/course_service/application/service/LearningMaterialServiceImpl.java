@@ -1,14 +1,16 @@
 package com.cts.course_service.application.service;
 
+
 import com.cts.classexception.CourseException;
 import com.cts.classexception.FileException;
 import com.cts.classexception.LearningMaterialException;
 import com.cts.course_service.application.entity.Course;
 import com.cts.course_service.application.entity.LearningMaterial;
+import com.cts.course_service.application.projection.LearningCourseMaterialProjection;
 import com.cts.course_service.application.repository.CourseRepository;
 import com.cts.course_service.application.repository.LearningMaterialRepository;
-import com.cts.course_service.application.dto.LearningMaterialRegistrationDto;
-import com.cts.course_service.application.projection.LearningCourseMaterialProjection;
+import com.cts.course_service.application.util.DtoMapper;
+import com.cts.dto.request.LearningMaterialRegistrationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -17,10 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -30,76 +33,55 @@ public class LearningMaterialServiceImpl implements ILearningMaterialService {
     private final CourseRepository courseRepository;
     private final LearningMaterialRepository learningMaterialRepository;
 
-    // In a real microservice, you would inject a StorageService here
-    // private final IStorageService storageService;
-
     @Override
     @Transactional
-    public String registerLearningMaterial(LearningMaterialRegistrationDto dto) {
-        Long courseId = dto.getCourseId();
-
-        // 1. Check local Course Repository
-        Course course = courseRepository.findByCourseId(courseId)
-                .orElseThrow(() -> new CourseException("Course not found: " + courseId, HttpStatus.NOT_FOUND));
-
-        // 2. Check if material already exists
-        if(learningMaterialRepository.checkExistingLearningMaterial(courseId)){
-            throw new LearningMaterialException("Material already exists for course: " + courseId, HttpStatus.CONFLICT);
+    public String registerLearningMaterial(LearningMaterialRegistrationDto learningMaterialRegistrationDto) throws CourseException,LearningMaterialException {
+        Long courseId = learningMaterialRegistrationDto.getCourseId();
+        log.info("Attempting to register learning material for course ID: {}", courseId);
+        Optional<Course> course = courseRepository.findCourseById(courseId);
+        if(course.isEmpty()){
+            log.error("Registration failed: Course ID {} not found", courseId);
+            throw new CourseException("Course is not registered with id: "+courseId, HttpStatus.NOT_FOUND);
         }
-
+        if(learningMaterialRepository.checkExistingLearningMaterial(courseId)){
+            log.error("Registration failed: Material already exists for Course ID {}", courseId);
+            throw new LearningMaterialException("LearningMaterial already uploaded for course id: "+courseId,HttpStatus.CONFLICT);
+        }
         try {
-            // 3. Logic to handle file (Extract to a dedicated Storage Utility/Service)
-            // String fileReference = storageService.upload(dto.getLearningMaterialFile());
-
-            LearningMaterial learningMaterial = new LearningMaterial();
-            learningMaterial.setLearningMaterialTitle(dto.getLearningMaterialTitle());
-            learningMaterial.setLearningMaterialUploadedDate(LocalDateTime.now());
-            learningMaterial.setLearningMaterialStatus("UPLOADED");
-            learningMaterial.setCourse(course);
-
-            // For now, using your DtoMapper logic but ensuring it returns a detached entity
-            // learningMaterial.setLearningMaterialFile(fileReference);
-
+            LearningMaterial learningMaterial = DtoMapper.learningMaterialDtoSeparator(learningMaterialRegistrationDto);
+            learningMaterial.setCourse(course.get());
             learningMaterialRepository.save(learningMaterial);
+            log.info("Successfully registered learning material for course ID: {}", courseId);
             return "Learning material uploaded successfully!";
-
-        } catch (Exception e) {
-            log.error("Upload failed", e);
-            throw new FileException("Internal Server Error during upload", HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch (IOException i){
+            log.error("File upload failed for course ID: {}", courseId, i);
+            throw new FileException("Could not save file to disk",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
     public LearningCourseMaterialProjection findMaterialsByCourseId(Long courseId) {
-        // Ensure the course exists in our local domain
-        if (!courseRepository.existsByCourseId(courseId)) {
-            throw new CourseException("Course not found", HttpStatus.NOT_FOUND);
+        Optional<Course> course = courseRepository.findCourseById(courseId);
+        if(course.isEmpty()){
+            log.error("Registration failed: Course ID {} not found", courseId);
+            throw new CourseException("Course is not registered with id: "+courseId, HttpStatus.NOT_FOUND);
         }
-
-        return learningMaterialRepository.findMaterialsByCourseId(courseId)
-                .orElseThrow(() -> new LearningMaterialException("No material found", HttpStatus.NOT_FOUND));
+        Optional<LearningCourseMaterialProjection> learningCourseMaterialProjection = learningMaterialRepository.findMaterialsByCourseId(courseId);
+        if(learningCourseMaterialProjection.isEmpty()){
+            throw new LearningMaterialException("No learning material available for the course id: "+courseId,HttpStatus.NOT_FOUND);
+        }
+        return  learningCourseMaterialProjection.get();
     }
-
     @Override
     public Resource getFileFromProjection(Long id) {
-        LearningMaterial material = learningMaterialRepository.findById(id)
-                .orElseThrow(() -> new LearningMaterialException("Material not found", HttpStatus.NOT_FOUND));
-
         try {
-            // Path-based retrieval is okay for a single-node dev environment,
-            // but in production microservices, this would be:
-            // return storageService.download(material.getLearningMaterialFile());
-
+            LearningMaterial material = learningMaterialRepository.findById(id).orElseThrow(() -> new RuntimeException("Material not found"));
             Path path = Paths.get(material.getLearningMaterialFile());
             Resource resource = new UrlResource(path.toUri());
-
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            } else {
-                throw new FileException("File is missing on storage", HttpStatus.NOT_FOUND);
-            }
+            if (resource.exists()) return resource;
+            else throw new RuntimeException("File not found");
         } catch (MalformedURLException e) {
-            throw new FileException("Storage configuration error", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new FileException("Error reading file",HttpStatus.NOT_FOUND);
         }
     }
 }

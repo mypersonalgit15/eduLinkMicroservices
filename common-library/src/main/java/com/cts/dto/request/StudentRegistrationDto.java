@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class StudentRegistrationDto  {
+public class StudentRegistrationDto implements IUserRegistration {
 
     @NotBlank(message = "Name is required")
     private String userName;

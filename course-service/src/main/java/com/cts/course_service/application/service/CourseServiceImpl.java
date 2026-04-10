@@ -151,7 +151,7 @@ private final FacultyFeign facultyFeign;
         log.info("Successfully retrieved {} courses for student ID: {}", courseDetailProjections.size(), studentId);
         return courseDetailProjections;
     }
-}
+
     @Override
     @Transactional
     public String updateCourse(Long courseId, CourseRegistrationDto courseRegistrationDto) {
@@ -166,16 +166,7 @@ private final FacultyFeign facultyFeign;
 
 
 
-    @Override
-    @Transactional
-    public String deleteCourse(Long courseId) {
-        log.info("Deletion request initiated for Course ID: {}", courseId);
-        Course course = courseRepository.findCourseById(courseId)
-                .orElseThrow(() -> new CourseException("Course not found with ID: " + courseId, HttpStatus.NOT_FOUND));
-        course.setCourseStatus("INACTIVE");
-        log.info("Course Id: {} deleted successfully", courseId);
-        return "Course deleted successfully with Id : "+courseId;
-    }
+
 
     @Override
     public List<CourseProjection> getCoursesByFaculty(Long facultyId) {

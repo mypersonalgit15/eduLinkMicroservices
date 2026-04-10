@@ -1,6 +1,6 @@
 package com.cts.course_service.application.service;
 
-import com.cts.course_service.application.dto.LearningMaterialRegistrationDto;
+import com.cts.dto.request.LearningMaterialRegistrationDto;
 import com.cts.course_service.application.projection.LearningCourseMaterialProjection;
 import org.springframework.core.io.Resource;
 
