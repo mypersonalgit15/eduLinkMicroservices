@@ -11,5 +11,6 @@ public class FeedBack {
     private Long id;
     private double rating;
     private String message;
-    private Long appUserId;
+    private String appUserName;
+    private Long appUserRoleId;
 }
