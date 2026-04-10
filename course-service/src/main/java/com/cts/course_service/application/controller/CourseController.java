@@ -29,10 +29,17 @@ public class CourseController {
         log.info("{} request for a new course registration",courseRegistrationDto.getFacultyId());
         return  ResponseEntity.status(200).body(iCourseService.registerCourse(courseRegistrationDto));
     }
+
     @GetMapping("/checkCourseExistByCourseId/{courseId}")
     public void checkCourseExistByCourseId(@Valid @PathVariable Long courseId){
         iCourseService.checkCourseExistByCourseId(courseId);
     }
+
+    @GetMapping("/findCourseTitleByCourseId/{courseId}")
+    public String findCourseTitleByCourseId(@Valid @PathVariable Long courseId){
+        return iCourseService.findCourseTitleByCourseId(courseId);
+    }
+
     @GetMapping("/getCoursesByFacultyId/{facultyId}")
     public ResponseEntity<List<CourseProjection>> getCoursesByFaculty(@Valid @PathVariable Long facultyId) {
         return ResponseEntity.status(200).body(iCourseService.getCoursesByFaculty(facultyId));
@@ -68,6 +75,12 @@ public class CourseController {
         log.info("Received request to delete course with ID: {}", courseId);
         String response = iCourseService.deleteCourse(courseId);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/updateRating/{courseId}/{newCourseRating}")
+    public ResponseEntity<String> updateCourseRating(@Valid @PathVariable Long courseId, @PathVariable double newCourseRating) {
+        log.info("Received PATCH request: Updating rating for courseId: {} to {}", courseId, newCourseRating);
+        return ResponseEntity.status(200).body(iCourseService.updateCourseRating(courseId, newCourseRating));
     }
 
     @GetMapping("/allCourseListByStudentId/{studentId}")

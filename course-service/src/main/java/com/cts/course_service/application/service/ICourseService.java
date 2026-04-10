@@ -20,6 +20,7 @@ public interface ICourseService {
     public int getFacultyCourseCount(Long facultyId );
     CourseDetailByIdProjection findCourseDetailsById(Long courseId);
     String courseEnrollmentRequest(CourseEnrollmentDto courseEnrollmentDto);
+    String updateCourseRating(Long courseId, double newCourseRating);
     List<CourseDetailProjection> findCourseListByStudentId(Long studentId);
 
 }
