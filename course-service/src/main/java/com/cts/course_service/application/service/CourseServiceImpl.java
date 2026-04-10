@@ -165,10 +165,6 @@ private final FacultyFeign facultyFeign;
         return "Course updated successfully!";
     }
 
-
-
-
-
     @Override
     public List<CourseProjection> getCoursesByFaculty(Long facultyId) {
         List<Long> courseIdList = courseEnrollmentFeign.getCoursesListByFacultyId(facultyId);
@@ -190,5 +186,4 @@ private final FacultyFeign facultyFeign;
         log.info("Faculty ID {} is assigned to {} courses", facultyId, count);
         return count;
     }
-
 }
