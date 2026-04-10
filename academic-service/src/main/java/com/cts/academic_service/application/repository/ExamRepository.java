@@ -3,8 +3,10 @@ package com.cts.academic_service.application.repository;
 import com.cts.academic_service.application.entity.Exam;
 import com.cts.dto.response.ExamProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ public interface ExamRepository extends JpaRepository<Exam, Long> {
             "FROM Exam e ORDER BY e.examLocalDateTime ASC")
     List<ExamProjection> findAllExams();
 
-    @Query("delete from Exam e where e.examId = :examId")
+    @Modifying
+    @Transactional
+    @Query("delete from Exam e where e.examId= :examId")
     void deleteByExamId(Long examId);
 }
