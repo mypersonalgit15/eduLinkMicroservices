@@ -41,6 +41,11 @@ public class FacultyController {
         List<CourseProjection> courses = facultyService.getFacultyCourses(facultyId);
         return ResponseEntity.status(200).body(courses);
     }
+
+    @PatchMapping("/updateRating/{facultyId}/{newFacultyRating}")
+    public ResponseEntity<String> updateFacultyRating(@Valid @PathVariable Long facultyId, @PathVariable double newFacultyRating){
+        return ResponseEntity.status(200).body(facultyService.updateFacultyRating(facultyId,newFacultyRating));
+    }
     @DeleteMapping("/delete/{facultyId}")
     public ResponseEntity<String> deleteFaculty(@Valid @PathVariable Long facultyId) {
         log.info("Received request to delete faculty with ID: {}", facultyId);
