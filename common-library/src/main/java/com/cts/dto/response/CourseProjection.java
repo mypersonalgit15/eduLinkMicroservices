@@ -13,4 +13,5 @@ public class CourseProjection {
     private int courseCredit;
     private String courseStatus;
     private double courseRating;
+    private Long facultyId;
 }
