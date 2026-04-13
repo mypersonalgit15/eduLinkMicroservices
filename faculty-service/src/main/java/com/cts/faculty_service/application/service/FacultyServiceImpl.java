@@ -11,6 +11,7 @@ import com.cts.faculty_service.application.feign.CourseFeign;
 import com.cts.faculty_service.application.projection.FacultyDetail;
 import com.cts.faculty_service.application.repository.FacultyRepository;
 import com.cts.faculty_service.application.util.DtoMapper;
+import com.cts.util.RatingCalculator;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 
@@ -48,6 +49,22 @@ public class FacultyServiceImpl implements IFacultyService{
         return "Thanks for Registration, Your User Id is: "+faculty.getFacultyId();
     }
 
+    @Override
+    @Transactional
+    public String updateFacultyRating(Long facultyId, double newFacultyRating) {
+        log.info("Updating rating for Faculty ID: {} with new score: {}", facultyId, newFacultyRating);
+        Optional<Faculty> faculty = facultyRepository.findFacultyById(facultyId);
+        if(faculty.isEmpty()){
+            log.error("Faculty with ID {} not found", facultyId);
+            throw new FacultyException("Faculty is not registered",HttpStatus.NOT_FOUND);
+        }
+        Long totalFacultyRating = faculty.get().getTotalFacultyRatingCount();
+        double newRating = RatingCalculator.calculateRating(faculty.get().getFacultyRating(),newFacultyRating,totalFacultyRating);
+        faculty.get().setFacultyRating(newRating);
+        faculty.get().setTotalFacultyRatingCount(totalFacultyRating+1);
+        log.info("Update successful for Faculty ID: {}. Rating changed to {} (Total reviews: {})",facultyId, newRating, totalFacultyRating + 1);
+        return "Thanks for you feedBack!";
+    }
 
     @Override
     @Transactional
@@ -65,6 +82,7 @@ public class FacultyServiceImpl implements IFacultyService{
         this.checkFacultyExistByFacultyId(facultyId);
         return courseFeign.getCoursesByFaculty(facultyId).getBody();
     }
+
     @Override
     public void checkFacultyExistByFacultyId(Long facultyId) throws FacultyException {
         if (facultyRepository.findFacultyById(facultyId).isEmpty()) {

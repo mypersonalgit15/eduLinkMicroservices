@@ -11,5 +11,6 @@ public interface IFacultyService {
     void checkFacultyExistByFacultyId(Long facultyId);
     FacultyDetailProjection getFacultyDetailsByFacultyId(Long facultyId);
     List<CourseProjection> getFacultyCourses(Long facultyId);
+    String updateFacultyRating(Long facultyId, double newFacultyRating);
     public String deleteFaculty(Long facultyId);
 }
