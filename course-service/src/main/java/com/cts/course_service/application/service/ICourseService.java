@@ -12,6 +12,7 @@ import java.util.Map;
 public interface ICourseService {
     String registerCourse(CourseRegistrationDto courseRegistrationDto);
     void checkCourseExistByCourseId(Long courseId);
+    List<CourseProjection> findAllAvailableCourse();
     String findCourseTitleByCourseId(Long courseId);
     String updateCourse(Long courseId, CourseRegistrationDto courseRegistrationDto);
     String patchCourse(Long courseId, Map<String, Object> updates);

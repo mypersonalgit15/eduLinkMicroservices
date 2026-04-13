@@ -45,6 +45,12 @@ public class CourseController {
         return ResponseEntity.status(200).body(iCourseService.getCoursesByFaculty(facultyId));
     }
 
+    @GetMapping("/findAllAvailableCourse")
+    public ResponseEntity<List<CourseProjection>> findALlAvailableCourse() {
+        log.info("User has called the endpoint successFully to fetch all available courses");
+        return ResponseEntity.status(200).body(iCourseService.findAllAvailableCourse());
+    }
+
     @GetMapping("/courseCount/{facultyId}")
     public Map<String, Integer> getFacultyCourseCount(@Valid @PathVariable Long facultyId) {
         int count = iCourseService.getFacultyCourseCount(facultyId);

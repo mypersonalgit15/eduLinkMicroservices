@@ -150,6 +150,17 @@ public class CourseServiceImpl implements ICourseService{
 
 
     @Override
+    public List<CourseProjection> findAllAvailableCourse() throws CourseException {
+        log.info("User has requested to display course List!");
+        List<CourseProjection> courseProjections = courseRepository.findAllAvailableCourse();
+        if (courseProjections.isEmpty()) {
+            log.error("no course is available to display");
+            throw new CourseException("No course Available!", HttpStatus.NOT_FOUND);
+        }
+        log.info("Course List has been accessed SuccessFully and first course name is {}", courseProjections.getFirst().getCourseTitle());
+        return courseProjections;
+    }
+    @Override
     @Transactional
     public String updateCourseRating(Long courseId, double newCourseRating) throws CourseException {
         log.info("Updating rating for course ID: {} with new rating: {}", courseId, newCourseRating);
