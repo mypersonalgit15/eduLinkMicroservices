@@ -3,8 +3,8 @@ package com.cts.enrollment_service.application.service;
 
 import com.cts.classexception.CourseException;
 import com.cts.enrollment_service.application.entity.FacultyCourseAssignment;
-import com.cts.enrollment_service.application.repository.FacultyCourseEnrollmentRepository;
 import com.cts.classexception.FacultyCourseEnrollmentException;
+import com.cts.enrollment_service.application.repository.FacultyCourseEnrollmentRepository;
 import com.cts.enrollment_service.application.util.DtoMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;

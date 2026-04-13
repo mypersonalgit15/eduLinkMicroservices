@@ -1,8 +1,8 @@
 package com.cts.iam_service.application.controller;
 
 import com.cts.dto.request.AppUserRegistrationDto;
-import com.cts.dto.response.AppUserDetailByIdDto;
 import com.cts.iam_service.application.service.IAppUserService;
+import com.cts.dto.response.AppUserDetailByIdDto;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

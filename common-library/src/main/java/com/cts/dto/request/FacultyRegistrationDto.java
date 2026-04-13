@@ -1,7 +1,6 @@
 package com.cts.dto.request;
 
 
-//import com.cts.dto.IUserRegistration;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
