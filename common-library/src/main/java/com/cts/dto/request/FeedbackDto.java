@@ -1,11 +1,9 @@
 package com.cts.dto.request;
 
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
+@Data
 public class FeedbackDto {
     @NotNull(message = "User ID is required")
     private Long appUserRoleId;
