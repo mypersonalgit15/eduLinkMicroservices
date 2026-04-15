@@ -13,9 +13,11 @@ public class LearningMaterial {
     private Long id;
 
     private String learningMaterialTitle;
-    private String learningMaterialFile;
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] learningMaterialFile;
     private LocalDateTime learningMaterialUploadedDate;
-    private String learningMaterialStatus; // UPLOADED, pending
+    private String learningMaterialStatus;
     @ManyToOne
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Course course;

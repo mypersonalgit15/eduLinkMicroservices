@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +32,11 @@ public class LearningMaterialController {
     }
 
     @GetMapping("/displayLearningMaterialContent/{id}")
-    public ResponseEntity<Resource> displayLearningMaterialContent(@Valid @PathVariable Long id){
-        return ResponseEntity.status(200).body(learningMaterialService.getFileFromProjection(id));
+    public ResponseEntity<Resource> displayLearningMaterialContent(@PathVariable Long id) {
+        Resource resource = learningMaterialService.getFileFromProjection(id);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"material_" + id + "\"")
+                .body(resource);
     }
 
 }

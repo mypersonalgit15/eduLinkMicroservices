@@ -9,6 +9,6 @@ import lombok.Getter;
 public class LearningCourseMaterialProjection {
     private Long id;
     private String learningMaterialTitle;
-    private String learningMaterialFile;
+    private byte[] learningMaterialFile;
     private Long courseId;
 }

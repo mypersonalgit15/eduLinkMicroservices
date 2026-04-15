@@ -3,6 +3,7 @@ package com.cts.course_service.application.util;
 import com.cts.course_service.application.entity.Course;
 import com.cts.course_service.application.entity.LearningMaterial;
 import com.cts.dto.request.CourseRegistrationDto;
+import com.cts.dto.request.LearningMaterialRegistrationDto;
 import com.cts.dto.response.CourseDetailByIdProjection;
 import com.cts.dto.response.CourseProjection;
 import com.cts.dto.response.FacultyDetailProjection;
@@ -49,7 +50,7 @@ public class DtoMapper {
         return courseDetailByIdProjection;
     }
 
-    public static LearningMaterial learningMaterialDtoSeparator(com.cts.dto.request.LearningMaterialRegistrationDto dto) throws IOException {
+    public static LearningMaterial learningMaterialDtoSeparator(LearningMaterialRegistrationDto dto) throws IOException {
         LearningMaterial learningMaterial = new LearningMaterial();
         learningMaterial.setLearningMaterialTitle(dto.getLearningMaterialTitle());
 
@@ -57,14 +58,8 @@ public class DtoMapper {
         if (file == null || file.isEmpty()) {
             throw new IOException("File is empty or missing");
         }
-        // examLocalDateTime is usually set at creation, but you can update it here if needed
+        learningMaterial.setLearningMaterialFile(file.getBytes());
 
-        File uploadDir = new File("uploads");
-        if (!uploadDir.exists()) uploadDir.mkdirs();
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        File dest = new File(uploadDir.getAbsolutePath() + File.separator + fileName);
-        file.transferTo(dest);
-        learningMaterial.setLearningMaterialFile(dest.getPath());
         learningMaterial.setLearningMaterialUploadedDate(LocalDateTime.now());
         learningMaterial.setLearningMaterialStatus("UPLOADED");
 

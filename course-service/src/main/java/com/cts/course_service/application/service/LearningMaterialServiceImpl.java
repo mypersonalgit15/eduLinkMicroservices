@@ -13,6 +13,7 @@ import com.cts.course_service.application.util.DtoMapper;
 import com.cts.dto.request.LearningMaterialRegistrationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -74,14 +75,16 @@ public class LearningMaterialServiceImpl implements ILearningMaterialService {
     }
     @Override
     public Resource getFileFromProjection(Long id) {
-        try {
-            LearningMaterial material = learningMaterialRepository.findById(id).orElseThrow(() -> new RuntimeException("Material not found"));
-            Path path = Paths.get(material.getLearningMaterialFile());
-            Resource resource = new UrlResource(path.toUri());
-            if (resource.exists()) return resource;
-            else throw new RuntimeException("File not found");
-        } catch (MalformedURLException e) {
-            throw new FileException("Error reading file",HttpStatus.NOT_FOUND);
+        LearningMaterial material = learningMaterialRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material not found with id: " + id));
+        byte[] data = material.getLearningMaterialFile();
+
+        if (data == null) {
+            throw new RuntimeException("File content is empty");
         }
+        return new ByteArrayResource(data);
     }
+
+
+
 }
