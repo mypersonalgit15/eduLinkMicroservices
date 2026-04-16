@@ -18,12 +18,17 @@ public class StudentCourseAssignmentController {
     private final IStudentCourseEnrollmentService studentCourseEnrollmentService;
 
     @PostMapping("/assign/{studentId}/{courseId}")
-    public void assignCourseToStudent(@PathVariable("studentId") Long studentId, @PathVariable("courseId") Long courseId){
+    public void assignCourseToStudent(@PathVariable("studentId") Long studentId, @PathVariable("courseId") Long courseId) {
         log.info("Received request to assign course with ID {} to student with ID {}", courseId, studentId);
         studentCourseEnrollmentService.assignCourseToStudent(studentId, courseId);
         log.info("Successfully assigned course with ID {} to student with ID {}", courseId, studentId);
     }
-
+    @GetMapping("/checkEnrollment/{studentId}/{courseId}")
+    public void checkStudentExistInCourse(@PathVariable("studentId") Long studentId, @PathVariable("courseId") Long courseId){
+        log.info("Received request to check if student with ID {} is enrolled in course with ID {}", studentId, courseId);
+        studentCourseEnrollmentService.checkStudentExistInCourse(studentId, courseId);
+        log.info("Successfully verified enrollment of student with ID {} in course with ID {}", studentId, courseId);
+    }
     @GetMapping("/findCourseListBystudentId/{studentId}")
     public List<Long> getCoursesListByStudentId(@PathVariable Long studentId) {
         log.info("Received request to get courses assigned to student with ID {}", studentId);
