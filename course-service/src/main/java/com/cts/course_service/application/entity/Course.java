@@ -25,8 +25,6 @@ public class Course {
     private double courseRating;
     private Long totalCourseRatingCount;
 
-    private Long facultyId;
-
     @ElementCollection
     private Set<Long> studentId = new HashSet<>();
     @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
