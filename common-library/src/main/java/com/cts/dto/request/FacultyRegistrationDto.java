@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class FacultyRegistrationDto implements IUserRegistration{
+public class FacultyRegistrationDto implements IUserRegistration {
 
     @NotBlank(message = "Username is required")
     private String userName;
@@ -33,9 +33,10 @@ public class FacultyRegistrationDto implements IUserRegistration{
     @Min(value = 0, message = "Experience cannot be negative")
     @Max(value = 60, message = "Experience seems unrealistic")
     private int facultyYearOfExperience;
-//    @NotBlank(message = "Password is required")
-//    @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
-//    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$",
-//            message = "Password must contain at least one uppercase, one lowercase, one digit, and one special character")
-//    private String password;
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$",
+            message = "Password must contain at least one uppercase, one lowercase, one digit, and one special character")
+    private String password;
 }
