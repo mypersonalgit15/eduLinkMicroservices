@@ -25,7 +25,7 @@ public class FacultyController {
     }
 
     @GetMapping("/checkFacultyExistByFacultyId/{facultyId}")
-    public void checkFacultyByFacultyId(@PathVariable Long facultyId){
+    public void checkFacultyExistByFacultyId(@PathVariable Long facultyId){
         log.info("Request has been initiated to get Faculty details by facultyId {}",facultyId);
         facultyService.checkFacultyExistByFacultyId(facultyId);
     }

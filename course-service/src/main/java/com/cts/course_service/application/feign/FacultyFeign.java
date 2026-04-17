@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface FacultyFeign {
 
     @GetMapping("/faculty/checkFacultyExistByFacultyId/{facultyId}")
-    void checkFacultyByFacultyId(@PathVariable Long facultyId);
+    void checkFacultyExistByFacultyId(@PathVariable Long facultyId);
 
     @GetMapping("/faculty/getFacultyDetailsByFacultyId/{facultyId}")
     FacultyDetailProjection getFacultyDetailsByFacultyId(@PathVariable Long facultyId);

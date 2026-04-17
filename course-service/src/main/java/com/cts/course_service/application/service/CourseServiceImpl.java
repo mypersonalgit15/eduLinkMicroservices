@@ -45,7 +45,7 @@ public class CourseServiceImpl implements ICourseService{
     @Retry(name = "courseRegister")
     public String registerCourse(CourseRegistrationDto courseRegistrationDto) {
         log.info("Course registration has intercepted inside service");
-        facultyFeign.checkFacultyByFacultyId(courseRegistrationDto.getFacultyId());
+        facultyFeign.checkFacultyExistByFacultyId(courseRegistrationDto.getFacultyId());
         Course course = DtoMapper.courseDtoSeparator(courseRegistrationDto);
         log.error("Unable to separate faculty from courseRegistrationDto");
         course.setCourseStatus("ACTIVE");

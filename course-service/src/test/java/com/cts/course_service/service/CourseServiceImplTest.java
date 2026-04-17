@@ -85,7 +85,7 @@ class CourseServiceImplTest {
         dto.setFacultyId(50L);
         dto.setCourseTitle("Java Testing");
         String result = courseService.registerCourse(dto);
-        verify(facultyFeign).checkFacultyByFacultyId(50L);
+        verify(facultyFeign).checkFacultyExistByFacultyId(50L);
         verify(courseRepository).save(any(Course.class));
         verify(courseEnrollmentFeign).assignCourseToFaculty(eq(50L), any());
         assertTrue(result.contains("registered successFully"));
