@@ -13,6 +13,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +25,14 @@ import java.util.Optional;
 public class AppUserServiceImpl implements IAppUserService{
     private final AppUserRepository appUserRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
     @Retry(name = "appUserRegistration", fallbackMethod = "appUserFallback")
     @CircuitBreaker(name = "appUserRegistration", fallbackMethod = "appUserFallback")
     public Long appUserRegistration(AppUserRegistrationDto appUserRegistrationDto) throws AppUserException {
-        AppUser appUser = DtoMapper.appUserDtoSeparator(appUserRegistrationDto);
+        AppUser appUser = DtoMapper.appUserDtoSeparator(appUserRegistrationDto,passwordEncoder);
         log.info("AppUser registration intercepted ");
         log.debug("AppUserRepo initiated searching user by email");
         Optional<AppUser> appUserOptional = appUserRepository.findAppUserByUserEmail(appUser.getUserEmail());
