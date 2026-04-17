@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class CourseController {
 
     private final ICourseService iCourseService;
 
+    @PreAuthorize("hasAnyRole('FACULTY')")
     @PostMapping("/register")
     public ResponseEntity<String> registerCourse(@Valid @RequestBody CourseRegistrationDto courseRegistrationDto){
         log.info("{} request for a new course registration",courseRegistrationDto.getFacultyId());
@@ -40,6 +42,7 @@ public class CourseController {
         return iCourseService.findCourseTitleByCourseId(courseId);
     }
 
+    @PreAuthorize("hasAnyRole('FACULTY', 'STUDENT')")
     @GetMapping("/getCoursesByFacultyId/{facultyId}")
     public ResponseEntity<List<CourseProjection>> getCoursesByFaculty(@Valid @PathVariable Long facultyId) {
         return ResponseEntity.status(200).body(iCourseService.getCoursesByFaculty(facultyId));
@@ -56,12 +59,15 @@ public class CourseController {
         int count = iCourseService.getFacultyCourseCount(facultyId);
         return Map.of("My Courses", count);
     }
+
+    @PreAuthorize("hasAnyRole('FACULTY', 'STUDENT')")
     @GetMapping("/findCourseDetailsById/{courseId}")
     public ResponseEntity<CourseDetailByIdProjection> findCourseById(@Valid @PathVariable Long courseId) {
         log.info("User requested for details of courseId: {} ", courseId);
         return ResponseEntity.status(200).body(iCourseService.findCourseDetailsById(courseId));
     }
 
+    @PreAuthorize("hasRole('FACULTY')")
     @PutMapping("/update/{courseId}")
     public ResponseEntity<String> updateCourse(@Valid @PathVariable Long courseId, @RequestBody CourseRegistrationDto courseRegistrationDto) {
         log.info("Received request to update course with ID: {}", courseId);
@@ -69,6 +75,7 @@ public class CourseController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('FACULTY')")
     @PatchMapping("/patch/{courseId}")
     public ResponseEntity<String> patchCourse(@Valid @PathVariable Long courseId, @RequestBody Map<String, Object> updates) {
         log.info("Received patch request for courseId: {}", courseId);
@@ -76,6 +83,7 @@ public class CourseController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('FACULTY')")
     @DeleteMapping("/delete/{courseId}")
     public ResponseEntity<String> deleteCourse(@Valid @PathVariable Long courseId) {
         log.info("Received request to delete course with ID: {}", courseId);
@@ -83,18 +91,21 @@ public class CourseController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('STUDENT')")
     @PatchMapping("/updateRating/{courseId}/{newCourseRating}")
     public ResponseEntity<String> updateCourseRating(@Valid @PathVariable Long courseId, @PathVariable double newCourseRating) {
         log.info("Received PATCH request: Updating rating for courseId: {} to {}", courseId, newCourseRating);
         return ResponseEntity.status(200).body(iCourseService.updateCourseRating(courseId, newCourseRating));
     }
 
+    @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/allCourseListByStudentId/{studentId}")
     public ResponseEntity<List<CourseDetailProjection>> findCourseListByStudentId(@Valid @PathVariable Long studentId){
         log.info("Received GET request: Fetching courses for studentId: {}", studentId);
         return ResponseEntity.status(200).body(iCourseService.findCourseListByStudentId(studentId));
     }
 
+    @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/enrollmentRequest")
     public ResponseEntity<String> courseEnrollmentRequest(@Valid @RequestBody CourseEnrollmentDto courseEnrollmentDto){
         log.info("Received PATCH request: Enrollment attempt for Student: {} on Course: {}",courseEnrollmentDto.getStudentId(), courseEnrollmentDto.getCourseId());

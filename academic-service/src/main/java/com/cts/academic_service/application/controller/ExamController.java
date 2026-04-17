@@ -37,5 +37,6 @@ public class ExamController {
         log.info("Controller: Request received to fetch all exam projections");
         return ResponseEntity.ok(examService.findAllExams());
     }
+    //complete exam
 
 }
