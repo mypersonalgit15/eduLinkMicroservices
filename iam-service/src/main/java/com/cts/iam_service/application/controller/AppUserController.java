@@ -1,6 +1,7 @@
 package com.cts.iam_service.application.controller;
 
 import com.cts.dto.request.AppUserRegistrationDto;
+import com.cts.dto.response.UserAuthDto;
 import com.cts.iam_service.application.service.IAppUserService;
 import com.cts.dto.response.AppUserDetailByIdDto;
 import jakarta.validation.Valid;
@@ -33,5 +34,12 @@ public class AppUserController {
     public AppUserDetailByIdDto findAppUserDetailsByAppUserId(@PathVariable Long appUserId){
         log.info("Request received to find app user details for app user id: {}", appUserId);
         return appUserService.findAppUserDetailsByAppUserId(appUserId);
+    }
+
+    @GetMapping("/findAppUserByEmail/{email}")
+    public ResponseEntity<UserAuthDto> findAppUserByEmail(@PathVariable String email){
+        log.info("Request received to find app user by email: {}", email);
+        UserAuthDto userAuthDto = appUserService.findAppUserByEmail(email);
+        return ResponseEntity.ok(userAuthDto);
     }
 }

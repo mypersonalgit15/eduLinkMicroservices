@@ -3,6 +3,7 @@ package com.cts.iam_service.application.service;
 import com.cts.classexception.AppUserException;
 import com.cts.dto.request.AppUserRegistrationDto;
 import com.cts.dto.response.AppUserDetailByIdDto;
+import com.cts.dto.response.UserAuthDto;
 import com.cts.iam_service.application.entity.AppUser;
 import com.cts.iam_service.application.entity.Role;
 import com.cts.iam_service.application.repository.AppUserRepository;
@@ -56,6 +57,23 @@ public class AppUserServiceImpl implements IAppUserService{
         appUserRepository.save(appUser);
         log.info("AppUser registration successful for email {}",appUser.getUserEmail());
         return appUser.getId();
+    }
+
+    @Override
+    public UserAuthDto findAppUserByEmail(String email) throws AppUserException {
+        Optional<AppUser> appUser = appUserRepository.findAppUserByUserEmail(email);
+        if(appUser.isEmpty()){
+            log.error("AppUser not found for email: {}", email);
+            throw new AppUserException("User not found for email: " + email, HttpStatus.NOT_FOUND);
+        }
+        UserAuthDto userAuthDto = new UserAuthDto();
+        userAuthDto.setId(appUser.get().getId());
+        userAuthDto.setUserName(appUser.get().getUserName());
+        userAuthDto.setUserEmail(appUser.get().getUserEmail());
+        userAuthDto.setUserPassword(appUser.get().getUserPassword());
+        userAuthDto.setRoleName(appUser.get().getRole() != null ? appUser.get().getRole().getRoleName() : null);
+        log.info("Retrieved user details for email: {}", email);
+        return userAuthDto;
     }
 
     @Override
