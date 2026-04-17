@@ -25,7 +25,7 @@ public class CourseController {
 
     private final ICourseService iCourseService;
 
-    @PreAuthorize("hasAnyRole('FACULTY')")
+    @PreAuthorize("hasRole('FACULTY')")
     @PostMapping("/register")
     public ResponseEntity<String> registerCourse(@Valid @RequestBody CourseRegistrationDto courseRegistrationDto){
         log.info("{} request for a new course registration",courseRegistrationDto.getFacultyId());
