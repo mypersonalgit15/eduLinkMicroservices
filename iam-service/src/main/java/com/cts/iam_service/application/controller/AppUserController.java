@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,6 +31,7 @@ public class AppUserController {
         return appUserService.findAppUserNameByAppUserId(appUserId);
     }
 
+    @PreAuthorize("hasAnyRole('STUDENT', 'FACULTY', 'ADMIN')")
     @GetMapping("/findAppUserDetailsByAppUserId/{appUserId}")
     public AppUserDetailByIdDto findAppUserDetailsByAppUserId(@PathVariable Long appUserId){
         log.info("Request received to find app user details for app user id: {}", appUserId);

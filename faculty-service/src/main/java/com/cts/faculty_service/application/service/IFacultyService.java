@@ -12,5 +12,7 @@ public interface IFacultyService {
     FacultyDetailProjection getFacultyDetailsByFacultyId(Long facultyId);
     List<CourseProjection> getFacultyCourses(Long facultyId);
     String updateFacultyRating(Long facultyId, double newFacultyRating);
-    public String deleteFaculty(Long facultyId);
+    String deleteFaculty(Long facultyId);
+    String getFacultyNameByFacultyId(Long facultyId);
+
 }

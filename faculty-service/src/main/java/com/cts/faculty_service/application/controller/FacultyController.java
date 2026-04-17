@@ -26,21 +26,24 @@ public class FacultyController {
         return ResponseEntity.status(200).body(facultyService.registerFaculty(facultyRegistrationDto));
     }
 
-    @PreAuthorize("hasRole('FACULTY')")
     @GetMapping("/checkFacultyExistByFacultyId/{facultyId}")
     public void checkFacultyExistByFacultyId(@PathVariable Long facultyId){
         log.info("Request has been initiated to get Faculty details by facultyId {}",facultyId);
         facultyService.checkFacultyExistByFacultyId(facultyId);
     }
 
-    @PreAuthorize("hasRole('FACULTY')")
+    @GetMapping("/getFacultyNameByFacultyId/{facultyId}")
+    public String getFacultyNameByFacultyId(@PathVariable Long facultyId){
+        log.info("Request has been initiated to get Faculty name by facultyId {}",facultyId);
+        return facultyService.getFacultyNameByFacultyId(facultyId);
+    }
+
     @GetMapping("/getFacultyDetailsByFacultyId/{facultyId}")
     public FacultyDetailProjection getFacultyDetailsByFacultyId(@PathVariable Long facultyId) {
         log.info("Request has been initiated to get Faculty details by facultyId {}", facultyId);
         return facultyService.getFacultyDetailsByFacultyId(facultyId);
     }
 
-    @PreAuthorize("hasRole('FACULTY')")
     @GetMapping("/getFacultyCourses/{facultyId}")
     public ResponseEntity<List<CourseProjection>> getFacultyCourses(@Valid @PathVariable Long facultyId) {
         log.info("Received request to get courses for faculty with ID: {}", facultyId);

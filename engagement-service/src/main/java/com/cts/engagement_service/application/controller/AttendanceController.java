@@ -19,6 +19,7 @@ import java.util.List;
 public class AttendanceController {
 
     private final IAttendanceService attendanceService;
+
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/register")
     public ResponseEntity<String> registerAttendanceByStudentId(@Valid @RequestBody AttendanceRegistrationDto attendanceRegistrationDto){

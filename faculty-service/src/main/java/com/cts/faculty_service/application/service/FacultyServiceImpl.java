@@ -76,6 +76,13 @@ public class FacultyServiceImpl implements IFacultyService{
         log.info("Faculty ID: {} and associated user deleted successfully", facultyId);
         return "Faculty record deleted successfully!";
     }
+
+    @Override
+    public String getFacultyNameByFacultyId(Long facultyId) {
+        Long appUserId = facultyRepository.findAppUserIdByFacultyId(facultyId);
+        return appUserFeign.findAppUserNameByAppUserId(appUserId);
+    }
+
     @Override
     public List<CourseProjection> getFacultyCourses(Long facultyId) {
         log.debug("Fetching courses for faculty: {}", facultyId);
