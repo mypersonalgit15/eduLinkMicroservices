@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -26,12 +27,14 @@ public class StudentController {
     }
 
     @GetMapping("/checkStudentExistByStudentId/{studentId}")
+    @PreAuthorize("hasAnyRole('STUDENT', 'FACULTY', 'ADMIN')")
     public ResponseEntity<String> checkStudentExistByStudentId(@PathVariable Long studentId){
         log.info("Checking existence of Student ID: {}", studentId);
         return ResponseEntity.status(200).body(iStudentService.checkStudentExistByStudentId(studentId));
     }
 
     @GetMapping("/getStudentNameByStudentId/{studentId}")
+    @PreAuthorize("hasAnyRole('STUDENT', 'FACULTY', 'ADMIN')")
     public String getStudentNameByStudentId(@PathVariable Long studentId){
         log.info("Request received to find student name for student id: {}", studentId);
         return iStudentService.getStudentNameByStudentId(studentId);
