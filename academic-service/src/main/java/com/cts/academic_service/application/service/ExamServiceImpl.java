@@ -54,4 +54,15 @@ public class ExamServiceImpl implements IExamService {
         log.info("Exam list accessed successfully. Total exams found: {}. First exam: {}", examProjections.size(), examProjections.getFirst());
         return examProjections;
     }
+
+    @Override
+    public List<ExamProjection> findExamsByCourseId(Long courseId) {
+        log.info("Fetching exams for course ID: {}", courseId);
+        List<ExamProjection> examProjections = examRepository.findExamsByCourseId(courseId);
+        if (examProjections.isEmpty()) {
+            log.error("No exams found for course ID: {}", courseId);
+            throw new ExamException("No exams found for the given course!", HttpStatus.NOT_FOUND);
+        }
+        return examProjections;
+    }
 }
