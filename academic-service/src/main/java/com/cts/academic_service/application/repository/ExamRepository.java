@@ -22,4 +22,9 @@ public interface ExamRepository extends JpaRepository<Exam, Long> {
     @Transactional
     @Query("delete from Exam e where e.examId= :examId")
     void deleteByExamId(Long examId);
+
+    @Query("SELECT new com.cts.dto.response.ExamProjection(" +
+            "e.examName, e.examLocalDateTime, e.examStatus, e.candidates) " +
+            "FROM Exam e WHERE e.courseId = :courseId ORDER BY e.examLocalDateTime ASC")
+    List<ExamProjection> findExamsByCourseId(Long courseId);
 }

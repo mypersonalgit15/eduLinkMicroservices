@@ -1,5 +1,6 @@
 package com.cts.academic_service.application.service;
 
+import com.cts.classexception.ExamException;
 import com.cts.dto.request.ExamCreationRequestDto;
 import com.cts.dto.response.ExamProjection;
 
@@ -9,5 +10,6 @@ public interface IExamService {
     String createExam(ExamCreationRequestDto examCreationRequestDto);
     List<ExamProjection> findAllExams();
     String deleteExam(Long examId);
+    List<ExamProjection> findExamsByCourseId(Long courseId);
 
 }

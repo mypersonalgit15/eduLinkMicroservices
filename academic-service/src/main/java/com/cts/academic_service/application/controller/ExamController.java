@@ -41,6 +41,13 @@ public class ExamController {
         log.info("Controller: Request received to fetch all exam projections");
         return ResponseEntity.ok(examService.findAllExams());
     }
+
+    @PreAuthorize("hasAnyRole('STUDENT','FACULTY')")
+    @GetMapping("/course/{courseId}")
+    public ResponseEntity<List<ExamProjection>> getExamsByCourseId(@PathVariable Long courseId) {
+        log.info("Controller: Request received to fetch exams for courseId: {}", courseId);
+        return ResponseEntity.ok(examService.findExamsByCourseId(courseId));
+    }
     //complete exam
 
 }
