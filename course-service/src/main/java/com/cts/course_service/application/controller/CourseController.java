@@ -20,7 +20,7 @@ import java.util.Map;
 @RequestMapping("/course")
 @AllArgsConstructor
 @Slf4j
-
+@CrossOrigin(origins = "http://localhost:4200")
 public class CourseController {
 
     private final ICourseService iCourseService;
