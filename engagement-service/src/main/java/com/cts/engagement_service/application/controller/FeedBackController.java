@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 @RequestMapping("/feedback")
+@CrossOrigin(origins = "http://localhost:4200")
 public class FeedBackController {
 
     private final IFeedBackService feedbackService;
