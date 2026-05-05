@@ -39,7 +39,9 @@ public class JwtAuthenticationFilter implements GlobalFilter {
             "/faculty-course-assignment/findFacultyIdByCourseId/",
             "/student-course-assignment/findCourseListBystudentId/",
             "/student-course-assignment/checkEnrollment/",
-            "/feedback/getFeedbackList"
+            "/feedback/getFeedbackList",
+            "/student/findStudentIdByAppUserId/",
+            "/faculty/findFacultyIdByAppUserId/"
     );
 
     private Mono<Void> sendUnauthorizedResponse(ServerWebExchange exchange, String errorMessage, String errorCode) {
@@ -101,10 +103,12 @@ public class JwtAuthenticationFilter implements GlobalFilter {
             log.info("✓ JWT token validation SUCCESSFUL");
             String username;
             String role;
+            Long appUserId;
 
             try {
                 username = jwtUtil.extractUsername(token);
                 role = jwtUtil.extractRole(token);
+                appUserId = jwtUtil.extractAppUserId(token);
             } catch (Exception extractionException) {
                 log.error("Failed to extract claims from token. Exception: {}", extractionException.getMessage(), extractionException);
                 return sendUnauthorizedResponse(exchange, "Failed to extract user details from token", "UNAUTHORIZED_EXTRACTION_FAILED");
@@ -123,6 +127,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
                     .request(exchange.getRequest().mutate()
                             .header("X-User-Email", username)
                             .header("X-User-Role", role)
+                            .header("X-App-User-Id", String.valueOf(appUserId))
                             .build())
                     .build();
 

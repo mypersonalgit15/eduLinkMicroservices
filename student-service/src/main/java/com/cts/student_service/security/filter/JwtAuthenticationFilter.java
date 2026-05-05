@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestPath = request.getRequestURI();
         log.debug("Processing request for path: {}", requestPath);
 
-        if (requestPath.startsWith("/student/register")) {
+        if (requestPath.startsWith("/student/register") || requestPath.startsWith("/student/findStudentIdByAppUserId/{appUserId}")) {
             log.debug("Public endpoint detected, skipping authentication for path: {}", requestPath);
             filterChain.doFilter(request, response);
             return;

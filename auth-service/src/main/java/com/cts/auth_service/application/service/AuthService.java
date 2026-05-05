@@ -1,6 +1,8 @@
 package com.cts.auth_service.application.service;
 
+import com.cts.auth_service.application.feign.FacultyServiceFeign;
 import com.cts.auth_service.application.feign.IamServiceFeignClient;
+import com.cts.auth_service.application.feign.StudentServiceFeign;
 import com.cts.auth_service.security.util.JwtUtil;
 import com.cts.dto.request.LoginDto;
 import com.cts.dto.response.LoginResponseDto;
@@ -21,6 +23,8 @@ public class AuthService {
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
     private final IamServiceFeignClient iamServiceFeignClient;
+    private final StudentServiceFeign studentServiceFeign;
+    private final FacultyServiceFeign facultyServiceFeign;
 
     public LoginResponseDto login(LoginDto loginDto) {
         log.info("Login attempt initiated for email: {}", loginDto.getEmail());
@@ -32,9 +36,14 @@ public class AuthService {
         log.debug("Fetching user details from IAM Service for email: {}", loginDto.getEmail());
         Long userId = iamServiceFeignClient.findAppUserByEmail(loginDto.getEmail()).getId();
         String userName = iamServiceFeignClient.findAppUserNameByAppUserId(userId);
-
+        Long appUserId=null;
+        if(role.equals("STUDENT")){
+            appUserId = studentServiceFeign.findStudentIdByAppUserId(userId);
+        }else if(role.equals("FACULTY")){
+            appUserId = facultyServiceFeign.findFacultyIdByAppUserId(userId);
+        }
         log.info("Generating JWT token for user: {}", userName);
-        String token = jwtUtil.generateToken(userDetails, role);
+        String token = jwtUtil.generateToken(userDetails, role, appUserId);
 
         LoginResponseDto response = new LoginResponseDto();
         response.setToken(token);

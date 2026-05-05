@@ -51,6 +51,11 @@ public class FacultyController {
         return ResponseEntity.status(200).body(courses);
     }
 
+    @GetMapping("/findFacultyIdByAppUserId/{appUserId}")
+    public Long findFacultyIdByAppUserId(@PathVariable Long appUserId){
+        return facultyService.findFacultyIdByAppUserId(appUserId);
+    }
+
     @PreAuthorize("hasRole('STUDENT')")
     @PatchMapping("/updateRating/{facultyId}/{newFacultyRating}")
     public ResponseEntity<String> updateFacultyRating(@Valid @PathVariable Long facultyId, @PathVariable double newFacultyRating){

@@ -84,6 +84,11 @@ public class FacultyServiceImpl implements IFacultyService{
     }
 
     @Override
+    public Long findFacultyIdByAppUserId(Long appUserId) {
+        return facultyRepository.findFacultyIdByAppUserId(appUserId);
+    }
+
+    @Override
     public List<CourseProjection> getFacultyCourses(Long facultyId) {
         log.debug("Fetching courses for faculty: {}", facultyId);
         this.checkFacultyExistByFacultyId(facultyId);

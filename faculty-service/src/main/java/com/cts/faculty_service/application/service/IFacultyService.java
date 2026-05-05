@@ -14,5 +14,5 @@ public interface IFacultyService {
     String updateFacultyRating(Long facultyId, double newFacultyRating);
     String deleteFaculty(Long facultyId);
     String getFacultyNameByFacultyId(Long facultyId);
-
+    Long findFacultyIdByAppUserId(Long appUserId);
 }

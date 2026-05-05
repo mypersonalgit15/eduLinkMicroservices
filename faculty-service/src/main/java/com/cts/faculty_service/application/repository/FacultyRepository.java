@@ -20,4 +20,7 @@ public interface FacultyRepository extends JpaRepository<Faculty,Long> {
 
     @Query("select f.appUserId from Faculty f where f.facultyId = :facultyId")
     Long findAppUserIdByFacultyId(@Param("facultyId") Long facultyId);
+
+    @Query("select f.facultyId from Faculty f where f.appUserId = :appUserId")
+    Long findFacultyIdByAppUserId(@Param("appUserId") Long appUserId);
 }

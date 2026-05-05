@@ -30,6 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.startsWith("/faculty/getFacultyNameByFacultyId/") ||
                 path.startsWith("/faculty/getFacultyDetailsByFacultyId/") ||
                 path.startsWith("/faculty/getFacultyCourses/") ||
+                path.startsWith("/faculty/findFacultyIdByAppUserId/") ||
                 path.startsWith("/actuator/");
 
         if (isPublicPath) {

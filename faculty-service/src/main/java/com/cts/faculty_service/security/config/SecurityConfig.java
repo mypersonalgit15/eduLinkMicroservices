@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/faculty/getFacultyNameByFacultyId/**").permitAll()
                         .requestMatchers("/faculty/getFacultyDetailsByFacultyId/**").permitAll()
                         .requestMatchers("/faculty/getFacultyCourses/**").permitAll()
+                        .requestMatchers("/faculty/findFacultyIdByAppUserId/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
