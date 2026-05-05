@@ -2,6 +2,8 @@ package com.cts.iam_service.application.util;
 
 import com.cts.dto.request.AppUserRegistrationDto;
 import com.cts.dto.response.AppUserDetailByIdDto;
+import com.cts.dto.response.StudentDetailByIdDto;
+import com.cts.dto.response.StudentDetailByIdProjection;
 import com.cts.iam_service.application.entity.AppUser;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

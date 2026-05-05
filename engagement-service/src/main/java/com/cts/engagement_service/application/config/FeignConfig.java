@@ -24,11 +24,15 @@ public class FeignConfig {
                     HttpServletRequest request = attributes.getRequest();
                     String email = request.getHeader("X-User-Email");
                     String role = request.getHeader("X-User-Role");
+                    String appUserId  = request.getHeader("X-App-User-Id");
                     if (email != null) {
                         template.header("X-User-Email", email);
                     }
                     if (role != null) {
                         template.header("X-User-Role", role);
+                    }
+                    if(appUserId!=null){
+                        template.header("X-App-User-Id",appUserId);
                     }
                 }
             }

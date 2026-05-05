@@ -2,6 +2,7 @@ package com.cts.student_service.application.feign;
 
 import com.cts.dto.request.AppUserRegistrationDto;
 import com.cts.dto.request.StudentRegistrationDto;
+import com.cts.dto.response.AppUserDetailByIdDto;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface AppUserFeign {
     @PostMapping("/appUser/register")
     ResponseEntity<Long> appUserRegistration(@Valid @RequestBody AppUserRegistrationDto appUserRegistrationDto);
+
     @GetMapping("/appUser/findAppUserNameByAppUserId/{appUserId}")
     String findAppUserNameByAppUserId(@PathVariable Long appUserId);
+
+    @GetMapping("/appUser/findAppUserDetailsByAppUserId/{appUserId}")
+    AppUserDetailByIdDto findAppUserDetailsByAppUserId(@PathVariable Long appUserId);
 }
