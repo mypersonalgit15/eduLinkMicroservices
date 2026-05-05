@@ -62,6 +62,11 @@ public class StudentServiceImpl implements IStudentService{
         return studentName;
     }
 
+    @Override
+    public Long findStudentIdByAppUserId(Long appUserId) {
+        return studentRepository.findStudentIdByAppUserId(appUserId);
+    }
+
     public String registerFallback(StudentRegistrationDto studentRegistrationDto, Throwable t) {
         log.error("Fallback triggered for user: {}. Reason: {}",
                 studentRegistrationDto.getUserEmail(), t.getMessage());

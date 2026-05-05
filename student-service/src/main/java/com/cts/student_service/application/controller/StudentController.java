@@ -26,6 +26,11 @@ public class StudentController {
         return ResponseEntity.status(200).body(iStudentService.registerStudent(studentRegistrationDto));
     }
 
+    @GetMapping("/findStudentIdByAppUserId/{appUserId}")
+    public Long findStudentIdByAppUserId(@PathVariable Long appUserId){
+        return iStudentService.findStudentIdByAppUserId(appUserId);
+    }
+
     @GetMapping("/checkStudentExistByStudentId/{studentId}")
     @PreAuthorize("hasAnyRole('STUDENT', 'FACULTY', 'ADMIN')")
     public ResponseEntity<String> checkStudentExistByStudentId(@PathVariable Long studentId){

@@ -34,6 +34,13 @@ public class JwtUtil {
         return role;
     }
 
+    public Long extractAppUserId(String token) {
+        log.debug("Extracting App User ID from JWT token");
+        Long appUserId = extractClaim(token, claims -> claims.get("appUserId", Long.class));
+        log.info("Successfully extracted App User ID: {}", appUserId);
+        return appUserId;
+    }
+
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         log.debug("Extracting claim from JWT token");

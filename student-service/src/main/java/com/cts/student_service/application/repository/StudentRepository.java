@@ -15,4 +15,7 @@ public interface StudentRepository extends JpaRepository<Student,Long> {
 
     @Query("select s.appUserId from Student s where s.studentId = :studentId")
     Long findAppUserIdByStudentId(@Param("studentId") Long studentId);
+
+    @Query("select s.studentId from Student s where s.appUserId = :appUserId")
+    Long findStudentIdByAppUserId(@Param("appUserId") Long appUserId);
 }

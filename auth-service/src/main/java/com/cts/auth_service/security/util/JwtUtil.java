@@ -44,9 +44,10 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    public String generateToken(UserDetails userDetails, String role) {
+    public String generateToken(UserDetails userDetails, String role, Long appUserId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
+        claims.put("appUserId", appUserId);
         return createToken(claims, userDetails.getUsername());
     }
 
