@@ -2,6 +2,9 @@ package com.cts.student_service.application.service;
 
 import com.cts.dto.request.AppUserRegistrationDto;
 import com.cts.dto.request.StudentRegistrationDto;
+import com.cts.dto.response.AppUserDetailByIdDto;
+import com.cts.dto.response.StudentDetailByIdDto;
+import com.cts.dto.response.StudentDetailByIdProjection;
 import com.cts.student_service.application.entity.Student;
 import com.cts.classexception.StudentException;
 import com.cts.student_service.application.feign.AppUserFeign;
@@ -65,6 +68,14 @@ public class StudentServiceImpl implements IStudentService{
     @Override
     public Long findStudentIdByAppUserId(Long appUserId) {
         return studentRepository.findStudentIdByAppUserId(appUserId);
+    }
+
+    @Override
+    public StudentDetailByIdDto findStudentDetailByStudentId(Long studentId) {
+        Long appUserId = studentRepository.findAppUserIdByStudentId(studentId);
+        AppUserDetailByIdDto appUserDetailByIdDto = appUserFeign.findAppUserDetailsByAppUserId(appUserId);
+        StudentDetailByIdProjection studentDetailByIdProjection = studentRepository.findStudentDetailByStudentId(studentId);
+        return DtoMapper.appUserStudentDtoMerger(appUserDetailByIdDto,studentDetailByIdProjection);
     }
 
     public String registerFallback(StudentRegistrationDto studentRegistrationDto, Throwable t) {

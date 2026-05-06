@@ -1,6 +1,9 @@
 package com.cts.student_service.application.util;
 
 import com.cts.dto.request.StudentRegistrationDto;
+import com.cts.dto.response.AppUserDetailByIdDto;
+import com.cts.dto.response.StudentDetailByIdDto;
+import com.cts.dto.response.StudentDetailByIdProjection;
 import com.cts.student_service.application.entity.Student;
 import com.cts.util.UIDGeneratorUtils;
 
@@ -16,5 +19,17 @@ public class DtoMapper {
         Long studentId = UIDGeneratorUtils.uidGenerator();
         student.setStudentId(studentId);
         return student;
+    }
+    public static StudentDetailByIdDto appUserStudentDtoMerger(AppUserDetailByIdDto appUserDetailByIdDto, StudentDetailByIdProjection studentDetailByIdProjection){
+        StudentDetailByIdDto studentDetailByIdDto = new StudentDetailByIdDto();
+        studentDetailByIdDto.setStudentName(appUserDetailByIdDto.getUserName());
+        studentDetailByIdDto.setStudentEmail(appUserDetailByIdDto.getUserEmail());
+        studentDetailByIdDto.setStudentNumber(appUserDetailByIdDto.getPhoneNumber());
+        studentDetailByIdDto.setStudentId(studentDetailByIdProjection.getStudentId());
+        studentDetailByIdDto.setStudentDOB(studentDetailByIdProjection.getStudentDOB());
+        studentDetailByIdDto.setStudentGender(studentDetailByIdProjection.getStudentGender());
+        studentDetailByIdDto.setStudentAddress(studentDetailByIdProjection.getStudentAddress());
+        studentDetailByIdDto.setStudentEnrollmentDateTime(studentDetailByIdProjection.getStudentEnrollmentDateTime());
+        return studentDetailByIdDto;
     }
 }

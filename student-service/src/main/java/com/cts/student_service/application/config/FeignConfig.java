@@ -1,4 +1,4 @@
-package com.cts.academic_service.application.config;
+package com.cts.student_service.application.config;
 
 
 import feign.RequestInterceptor;
@@ -21,19 +21,21 @@ public class FeignConfig {
                 ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
                 if (attributes != null) {
+                    
                     HttpServletRequest request = attributes.getRequest();
+
+                    String authHeader = request.getHeader("Authorization");
+                    if (authHeader != null) {
+                        template.header("Authorization", authHeader);
+                    }
+
                     String email = request.getHeader("X-User-Email");
                     String role = request.getHeader("X-User-Role");
-                    String appUserId  = request.getHeader("X-App-User-Id");
-                    if (email != null) {
-                        template.header("X-User-Email", email);
-                    }
-                    if (role != null) {
-                        template.header("X-User-Role", role);
-                    }
-                    if(appUserId!=null){
-                        template.header("X-App-User-Id",appUserId);
-                    }
+                    String appUserId = request.getHeader("X-App-User-Id");
+
+                    if (email != null) template.header("X-User-Email", email);
+                    if (role != null) template.header("X-User-Role", role);
+                    if (appUserId != null) template.header("X-App-User-Id", appUserId);
                 }
             }
         };

@@ -1,6 +1,7 @@
 package com.cts.student_service.application.controller;
 
 import com.cts.dto.request.StudentRegistrationDto;
+import com.cts.dto.response.StudentDetailByIdDto;
 import com.cts.student_service.application.service.IStudentService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,13 @@ public class StudentController {
     @GetMapping("/findStudentIdByAppUserId/{appUserId}")
     public Long findStudentIdByAppUserId(@PathVariable Long appUserId){
         return iStudentService.findStudentIdByAppUserId(appUserId);
+    }
+
+    @GetMapping("/findStudentDetailByStudentId/{studentId}")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<StudentDetailByIdDto> findStudentDetailByStudentId(@PathVariable Long studentId){
+        log.info("Request intercepted to find detail by student id {}",studentId);
+        return ResponseEntity.status(200).body(iStudentService.findStudentDetailByStudentId(studentId));
     }
 
     @GetMapping("/checkStudentExistByStudentId/{studentId}")
