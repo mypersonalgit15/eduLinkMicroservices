@@ -1,4 +1,4 @@
-package com.cts.classexception;
+package com.cts.student_service.application.classException;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

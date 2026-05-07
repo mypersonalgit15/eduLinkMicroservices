@@ -34,11 +34,6 @@ public class GlobalException {
         return ResponseEntity.status(a.getHttpStatus()).body(a.getMessage());
     }
 
-    @ExceptionHandler(StudentException.class)
-    public ResponseEntity<String> studentExceptionHandler(StudentException s){
-        return ResponseEntity.status(s.getHttpStatus()).body(s.getMessage());
-    }
-
     @ExceptionHandler(FacultyException.class)
     public ResponseEntity<String> facultyExceptionHandler(FacultyException f){
         return ResponseEntity.status(f.getHttpStatus()).body(f.getMessage());

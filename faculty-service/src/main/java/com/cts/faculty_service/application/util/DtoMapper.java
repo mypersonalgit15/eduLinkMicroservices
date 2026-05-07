@@ -21,6 +21,7 @@ public class DtoMapper {
 
     public static FacultyDetailByIdDto appUserFacultyDtoMerger(Faculty faculty, AppUserDetailByIdDto appUserDetailByIdDto){
         FacultyDetailByIdDto facultyDetailByIdDto = new FacultyDetailByIdDto();
+        facultyDetailByIdDto.setFacultyId(faculty.getFacultyId());
         facultyDetailByIdDto.setFacultyName(appUserDetailByIdDto.getUserName());
         facultyDetailByIdDto.setFacultyEmail(appUserDetailByIdDto.getUserEmail());
         facultyDetailByIdDto.setFacultyPhoneNumber(appUserDetailByIdDto.getPhoneNumber());

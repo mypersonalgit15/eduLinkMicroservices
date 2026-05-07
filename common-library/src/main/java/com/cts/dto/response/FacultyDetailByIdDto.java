@@ -3,6 +3,7 @@ import lombok.Data;
 
 @Data
 public class FacultyDetailByIdDto {
+    private Long facultyId;
     private  String facultyName;
     private  String facultyEmail;
     private  Long facultyPhoneNumber;
