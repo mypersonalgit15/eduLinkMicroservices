@@ -3,14 +3,17 @@ package com.cts.academic_service.application.controller;
 
 import com.cts.academic_service.application.entity.AssignmentStatus;
 import com.cts.academic_service.application.service.IAssignmentService;
+import com.cts.dto.request.LearningMaterialRegistrationDto;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Slf4j
 @RestController
 @RequestMapping("/assignment")
 @AllArgsConstructor
@@ -31,6 +34,7 @@ public class AssignmentController {
         assignmentService.completeAssignment(assignmentId, studentId);
         return ResponseEntity.ok("Assignment Completed");
     }
+
 
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/course/{courseId}/exam-access")

@@ -2,6 +2,7 @@ package com.cts.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 
 public class AttendanceCalculator {
     public static double calculateAttendance(Long totalAttendedDays,Long totalDaysToBeAttend){
@@ -15,5 +16,8 @@ public class AttendanceCalculator {
             roundedPercentage = 100.00;
         }
         return roundedPercentage;
+    }
+    public static long getCalendarDaysBetween(LocalDateTime start, LocalDateTime end) {
+        return java.time.temporal.ChronoUnit.DAYS.between(start.toLocalDate(), end.toLocalDate());
     }
 }

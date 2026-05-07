@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
@@ -15,4 +16,5 @@ public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
 
     @Query("SELECT min(a.localDateTime) from Attendance a where a.courseId = :courseId and a.studentId = :studentId")
     LocalDateTime findFirstEnrollmentDate(Long courseId, Long studentId);
+    Optional<Attendance> findTopByCourseIdAndStudentIdOrderByLocalDateTimeDesc(Long courseId, Long studentId);
 }

@@ -18,12 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class AttendanceServiceImpl implements IAttendanceService{
+public class AttendanceServiceImpl implements IAttendanceService {
 
     private final AttendanceRepository attendanceRepository;
     private final StudentFeign studentFeign;
@@ -32,55 +33,95 @@ public class AttendanceServiceImpl implements IAttendanceService{
 
 
     @Override
+    public List<CourseAttendanceProjection> findAttendanceByCourse(Long studentId) {
+        studentFeign.checkStudentExistByStudentId(studentId);
+        List<Long> studentCourseRegisteredList = studentCourseEnrollmentFeign.getCoursesListByStudentId(studentId);
+        List<CourseAttendanceProjection> courseAttendanceProjections = new ArrayList<>();
+
+        for (Long courseId : studentCourseRegisteredList) {
+            CourseAttendanceProjection course = new CourseAttendanceProjection();
+            course.setCourseId(courseId);
+            course.setCourseTitle(courseFeign.findCourseTitleByCourseId(courseId));
+
+            // 1. Get the total count of markings in the DB
+            Long totalAttendedDays = attendanceRepository.countAttendanceByIdAndStudentId(courseId, studentId);
+
+            // 2. Fetch the LATEST record for the 24-hour lockout check in Angular
+            Optional<Attendance> lastRecord = attendanceRepository
+                    .findTopByCourseIdAndStudentIdOrderByLocalDateTimeDesc(courseId, studentId);
+
+            if (totalAttendedDays > 0L && lastRecord.isPresent()) {
+                LocalDateTime firstAttendanceDate = attendanceRepository.findFirstEnrollmentDate(courseId, studentId);
+
+                // 3. FIXED CALCULATION:
+                // Use toLocalDate() to compare calendar dates, not timestamps.
+                // If firstAttendance is May 7 and now is May 7, daysBetween is 0.
+                long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(
+                        firstAttendanceDate.toLocalDate(),
+                        java.time.LocalDate.now()
+                );
+
+                // 4. The window must be at least 1 (the first day of attendance)
+                long window = daysBetween + 1;
+
+                // 5. Calculate the percentage based on Attended vs. Days Elapsed
+                double attendancePercentage = AttendanceCalculator.calculateAttendance(totalAttendedDays, window);
+
+                course.setAttendancePercentage(attendancePercentage);
+                course.setLastAttendanceDate(lastRecord.get().getLocalDateTime());
+
+                log.info("Student {}: Course {} | Attended: {} | Window: {} | Rate: {}%",
+                        studentId, courseId, totalAttendedDays, window, attendancePercentage);
+
+            } else {
+                // No attendance marked yet
+                course.setAttendancePercentage(0.0);
+                course.setLastAttendanceDate(null);
+            }
+
+            courseAttendanceProjections.add(course);
+        }
+        return courseAttendanceProjections;
+    }
+    @Override
     @Transactional
     public String registerAttendanceByStudentId(AttendanceRegistrationDto attendanceRegistrationDto) {
         Long studentId = attendanceRegistrationDto.getStudentId();
         Long courseId = attendanceRegistrationDto.getCourseId();
-        log.info("Initiating attendance registration process - Student ID: {}, Course ID: {}", studentId, courseId);
-        log.debug("Validating existence of Student ID: {}", studentId);
-        studentFeign.checkStudentExistByStudentId(attendanceRegistrationDto.getStudentId());
-        log.debug("Validating existence of Course ID: {}", courseId);
-        courseFeign.checkCourseExistByCourseId(attendanceRegistrationDto.getCourseId());
-        log.debug("Verifying enrollment for Student ID: {} in Course ID: {}", studentId, courseId);
-        studentCourseEnrollmentFeign.checkStudentExistInCourse(studentId, courseId);
-        log.info("Attempting to register attendance for Student ID: {} in Course ID: {}", studentId, courseId);
-        Attendance attendance = DtoMapper.attendanceDtoSeparator(attendanceRegistrationDto);
-        attendanceRepository.save(attendance);
-        log.info("Attendance successfully recorded for Student ID: {} in Course ID: {}", attendanceRegistrationDto.getStudentId(), attendanceRegistrationDto.getCourseId());
-        return "Attendance recorded successFully!";
-    }
 
-    @Override
-    public List<CourseAttendanceProjection> findAttendanceByCourse(Long studentId) {
+        log.info("Initiating attendance registration - Student: {}, Course: {}", studentId, courseId);
 
+        // 1. External Validations (Feign Calls)
+        // Check if student exists, course exists, and student is actually enrolled
         studentFeign.checkStudentExistByStudentId(studentId);
-        log.info("Fetching attendance report for Student ID: {}", studentId);
-        List<Long> studentCourseRegisteredList = studentCourseEnrollmentFeign.getCoursesListByStudentId(studentId);
-        List<CourseAttendanceProjection> courseAttendanceProjections = new ArrayList<>();
-        for(Long courseId: studentCourseRegisteredList){
-            log.debug("Student ID {} is registered in Course ID {}", studentId, courseId);
-            CourseAttendanceProjection courseAttendanceProjection = new CourseAttendanceProjection();
-            courseAttendanceProjection.setCourseId(courseId);
-            String courseName = courseFeign.findCourseTitleByCourseId(courseId);
-            courseAttendanceProjection.setCourseTitle(courseName);
-            courseAttendanceProjection.setAttendancePercentage(0.0);
-            courseAttendanceProjections.add(courseAttendanceProjection);
-        }
-        log.debug("Found {} courses for student {}", courseAttendanceProjections.size(), studentId);
-        for(CourseAttendanceProjection course: courseAttendanceProjections){
-            Long totalAttendedDays = attendanceRepository.countAttendanceByIdAndStudentId(course.getCourseId(),studentId);
-            if(totalAttendedDays >0L){
-                LocalDateTime firstAttendanceDate = attendanceRepository.findFirstEnrollmentDate(course.getCourseId(),studentId);
-                LocalDateTime lastAttendanceDate = LocalDateTime.now();
-                Long daysBetween = DateUtils.getCalendarDaysBetween(firstAttendanceDate,lastAttendanceDate);
-                double attendancePercentage = AttendanceCalculator.calculateAttendance(totalAttendedDays,daysBetween);
-                course.setAttendancePercentage(attendancePercentage);
-                log.info("Course: {} | Attended: {} days | first Attended date: {} | last attended date: {} | Window: {} days | Rate: {}%",course.getCourseId(), totalAttendedDays, firstAttendanceDate,lastAttendanceDate, daysBetween, String.format("%.2f", attendancePercentage));
-            }else{
-                log.debug("Skipping Course {}: Zero attendance records found.", course.getCourseId());
+        courseFeign.checkCourseExistByCourseId(courseId);
+        studentCourseEnrollmentFeign.checkStudentExistInCourse(studentId, courseId);
+
+        // 2. 24-Hour Lockout Logic
+        // We fetch the most recent record based on the descending LocalDateTime
+        Optional<Attendance> lastAttendance = attendanceRepository
+                .findTopByCourseIdAndStudentIdOrderByLocalDateTimeDesc(courseId, studentId);
+
+        if (lastAttendance.isPresent()) {
+            LocalDateTime lastMarkedTime = lastAttendance.get().getLocalDateTime();
+            LocalDateTime unlockTime = lastMarkedTime.plusHours(24);
+
+            if (LocalDateTime.now().isBefore(unlockTime)) {
+                log.warn("Lockout Active: Student {} tried to mark attendance too early. Next available: {}",
+                        studentId, unlockTime);
+
+                // Returning a clear string for the Angular frontend to display
+                return "Attendance locked! You can mark it again after " + unlockTime.toString();
             }
         }
-        log.info("Completed attendance report for Student {}. Courses processed: {}", studentId, courseAttendanceProjections.size());
-        return courseAttendanceProjections;
+
+        // 3. Map and Save using DtoMapper
+        // The DtoMapper now handles setting IDs and the current timestamp
+        Attendance attendance = DtoMapper.attendanceDtoSeparator(attendanceRegistrationDto);
+
+        attendanceRepository.save(attendance);
+
+        log.info("Attendance successfully recorded for Student ID: {}", studentId);
+        return "Attendance recorded successfully!";
     }
 }
