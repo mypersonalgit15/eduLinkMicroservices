@@ -29,7 +29,6 @@ public class JwtAuthenticationFilter implements GlobalFilter {
             "/faculty/register",
             "/faculty/checkFacultyExistByFacultyId/",
             "/faculty/getFacultyNameByFacultyId/",
-            "/faculty/getFacultyDetailsByFacultyId/",
             "/faculty/getFacultyCourses",
             "/course/checkCourseExistByCourseId/",
             "/course/findCourseTitleByCourseId/",

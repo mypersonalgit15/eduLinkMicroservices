@@ -54,9 +54,8 @@ public class CourseController {
     }
 
     @GetMapping("/courseCount/{facultyId}")
-    public Map<String, Integer> getFacultyCourseCount(@Valid @PathVariable Long facultyId) {
-        int count = iCourseService.getFacultyCourseCount(facultyId);
-        return Map.of("My Courses", count);
+    public Integer getFacultyCourseCount(@Valid @PathVariable Long facultyId) {
+        return iCourseService.getFacultyCourseCount(facultyId);
     }
 
     @PreAuthorize("hasAnyRole('FACULTY', 'STUDENT')")

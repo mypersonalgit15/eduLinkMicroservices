@@ -3,12 +3,12 @@ package com.cts.faculty_service.application.service;
 import com.cts.classexception.FacultyException;
 import com.cts.dto.request.AppUserRegistrationDto;
 import com.cts.dto.request.FacultyRegistrationDto;
+import com.cts.dto.response.AppUserDetailByIdDto;
 import com.cts.dto.response.CourseProjection;
-import com.cts.dto.response.FacultyDetailProjection;
+import com.cts.dto.response.FacultyDetailByIdDto;
 import com.cts.faculty_service.application.entity.Faculty;
 import com.cts.faculty_service.application.feign.AppUserFeign;
 import com.cts.faculty_service.application.feign.CourseFeign;
-import com.cts.faculty_service.application.projection.FacultyDetail;
 import com.cts.faculty_service.application.repository.FacultyRepository;
 import com.cts.faculty_service.application.util.DtoMapper;
 import com.cts.util.RatingCalculator;
@@ -104,21 +104,17 @@ public class FacultyServiceImpl implements IFacultyService{
     }
 
     @Override
-    public FacultyDetailProjection getFacultyDetailsByFacultyId(Long facultyId)throws FacultyException {
+    public FacultyDetailByIdDto getFacultyDetailsByFacultyId(Long facultyId)throws FacultyException {
         Optional<Faculty> faculty = facultyRepository.findFacultyById(facultyId);
         if(faculty.isEmpty()){
             log.error("Faculty not found for ID: {}", facultyId);
             throw new FacultyException("Faculty not found for ID: " + facultyId, HttpStatus.NOT_FOUND);
         }
-        String facultyName = appUserFeign.findAppUserNameByAppUserId(faculty.get().getAppUserId());
-        Optional<FacultyDetail> facultyDetail = facultyRepository.findFacultyDetailProjectionByFacultyId(facultyId);
-        if(facultyDetail.isEmpty()){
-            log.error("Faculty details not found for ID: {}", facultyId);
-            throw new FacultyException("Faculty details not found for ID: " + facultyId, HttpStatus.NOT_FOUND);
-        }
-        FacultyDetailProjection facultyDetailProjection = new FacultyDetailProjection(facultyName, facultyDetail.get().getFacultyRating(), facultyDetail.get().getFacultyYearOfExperience());
+        Long appUserId  = facultyRepository.findAppUserIdByFacultyId(facultyId);
+        AppUserDetailByIdDto appUserDetailByIdDto = appUserFeign.findAppUserDetailsByAppUserId(appUserId);
+        FacultyDetailByIdDto facultyDetailByIdDto = DtoMapper.appUserFacultyDtoMerger(faculty.get(),appUserDetailByIdDto);
         log.info("Successfully retrieved faculty details for ID: {}", facultyId);
-        return facultyDetailProjection;
+        return facultyDetailByIdDto;
     }
 
     public String registerFallback(FacultyRegistrationDto facultyRegistrationDto, Throwable t) {
