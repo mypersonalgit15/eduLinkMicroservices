@@ -1,13 +1,14 @@
 package com.cts.dto.response;
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
+@Data
 public class FacultyDetailByIdDto {
-    private  String userName;
-    private  String userEmail;
-    private  Long phoneNumber;
+    private  String facultyName;
+    private  String facultyEmail;
+    private  Long facultyPhoneNumber;
     private  String facultyGender;
     private  int facultyYearOfExperience;
     private  String facultyAddress;
     private  double facultyRating;
+
 }

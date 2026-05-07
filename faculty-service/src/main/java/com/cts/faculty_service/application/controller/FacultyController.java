@@ -2,7 +2,7 @@ package com.cts.faculty_service.application.controller;
 
 import com.cts.dto.request.FacultyRegistrationDto;
 import com.cts.dto.response.CourseProjection;
-import com.cts.dto.response.FacultyDetailProjection;
+import com.cts.dto.response.FacultyDetailByIdDto;
 import com.cts.faculty_service.application.service.IFacultyService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -38,10 +38,11 @@ public class FacultyController {
         return facultyService.getFacultyNameByFacultyId(facultyId);
     }
 
+    @PreAuthorize("hasAnyRole('STUDENT', 'FACULTY')")
     @GetMapping("/getFacultyDetailsByFacultyId/{facultyId}")
-    public FacultyDetailProjection getFacultyDetailsByFacultyId(@PathVariable Long facultyId) {
+    public ResponseEntity<FacultyDetailByIdDto> getFacultyDetailsByFacultyId(@PathVariable Long facultyId) {
         log.info("Request has been initiated to get Faculty details by facultyId {}", facultyId);
-        return facultyService.getFacultyDetailsByFacultyId(facultyId);
+        return ResponseEntity.status(200).body(facultyService.getFacultyDetailsByFacultyId(facultyId));
     }
 
     @GetMapping("/getFacultyCourses/{facultyId}")
