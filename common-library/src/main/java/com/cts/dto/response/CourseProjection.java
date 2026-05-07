@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -14,7 +13,9 @@ public class CourseProjection {
     private String courseTitle;
     private String courseSubject;
     private String courseGradeLevel;
-    private int courseCredit;
+    private Integer courseCredit;
+    private String courseDescription;
     private String courseStatus;
-    private double courseRating;
+    private Double courseRating;
+
 }

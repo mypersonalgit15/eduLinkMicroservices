@@ -21,6 +21,7 @@ public class Course {
     private String courseSubject;
     private String courseGradeLevel;
     private int courseCredit;
+    private String courseDescription;
     private String courseStatus;
     private double courseRating;
     private Long totalCourseRatingCount;

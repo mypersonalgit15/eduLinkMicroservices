@@ -23,6 +23,9 @@ public class CourseRegistrationDto {
     @Max(value = 5, message = "Course cannot exceed 10 credits")
     private int courseCredit;
 
+    @NotBlank(message = "Course Description is required")
+    @NotNull(message = "Description should not be null")
+    private String courseDescription;
 
     @NotNull(message = "Faculty ID must be provided")
     @Positive(message = "Invalid Faculty ID")

@@ -18,10 +18,10 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
     boolean existsByCourseId(@Param("courseId") Long courseId);
 
     @Query("SELECT new com.cts.dto.response.CourseProjection(c.courseId, c.courseTitle," +
-            " c.courseSubject,c.courseGradeLevel,c.courseCredit,c.courseStatus,c.courseRating) FROM Course c where c.courseId = :courseId")
+            " c.courseSubject,c.courseGradeLevel,c.courseCredit,c.courseDescription, c.courseStatus,c.courseRating) FROM Course c where c.courseId = :courseId")
     Optional<CourseProjection> findByCourseId(@Param("courseId") Long courseId);
     @Query(" select new com.cts.dto.response.CourseProjection(c.courseId, c.courseTitle," +
-            " c.courseSubject,c.courseGradeLevel,c.courseCredit,c.courseStatus,c.courseRating) from Course c where c.courseStatus='ACTIVE'")
+            " c.courseSubject,c.courseGradeLevel,c.courseCredit,c.courseDescription,c.courseStatus,c.courseRating) from Course c where c.courseStatus='ACTIVE'")
     List<CourseProjection> findAllAvailableCourse();
     @Query("select c from Course c where c.courseId = :courseId")
     Optional<Course> findCourseById(@Param("courseId") Long courseId);

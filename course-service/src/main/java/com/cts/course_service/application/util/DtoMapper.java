@@ -21,6 +21,7 @@ public class DtoMapper {
         course.setCourseTitle(courseRegistrationDto.getCourseTitle());
         course.setCourseSubject(courseRegistrationDto.getCourseSubject());
         course.setCourseCredit(courseRegistrationDto.getCourseCredit());
+        course.setCourseDescription(courseRegistrationDto.getCourseDescription());
         course.setCourseRating(0.0);
         course.setTotalCourseRatingCount(0L);
         course.setCourseGradeLevel(courseRegistrationDto.getCourseGradeLevel());
@@ -44,6 +45,7 @@ public class DtoMapper {
         courseDetailByIdProjection.setCourseCredit(courseProjection.getCourseCredit());
         courseDetailByIdProjection.setCourseStatus(courseProjection.getCourseStatus());
         courseDetailByIdProjection.setCourseRating(courseProjection.getCourseRating());
+        courseDetailByIdProjection.setCourseDescription(courseProjection.getCourseDescription());
         courseDetailByIdProjection.setFacultyName(facultyDetailProjection.getFacultyName());
         courseDetailByIdProjection.setFacultyRating(facultyDetailProjection.getFacultyRating());
         courseDetailByIdProjection.setFacultyYearOfExperience(facultyDetailProjection.getFacultyYearOfExperience());
