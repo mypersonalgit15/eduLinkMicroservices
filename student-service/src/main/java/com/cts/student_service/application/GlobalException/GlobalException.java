@@ -1,5 +1,6 @@
 package com.cts.student_service.application.GlobalException;
 
+import com.cts.student_service.application.classException.StudentException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

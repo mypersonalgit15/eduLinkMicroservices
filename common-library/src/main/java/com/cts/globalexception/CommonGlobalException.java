@@ -17,7 +17,7 @@ import java.util.Map;
 
 @ControllerAdvice
 @Slf4j
-public class GlobalException {
+public class CommonGlobalException {
 
     @ExceptionHandler(FacultyCourseEnrollmentException.class)
     public ResponseEntity<String> facultyCourseEnrollmentExceptionHandler(FacultyCourseEnrollmentException fe){

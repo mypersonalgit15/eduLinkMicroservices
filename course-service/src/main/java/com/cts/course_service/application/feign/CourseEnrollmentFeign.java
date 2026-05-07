@@ -24,6 +24,9 @@ public interface CourseEnrollmentFeign {
     @PostMapping("/student-course-assignment/assign/{studentId}/{courseId}")
     void assignCourseToStudent(@PathVariable("studentId") Long studentId, @PathVariable("courseId") Long courseId);
 
+    @GetMapping("/checkEnrollment/{studentId}/{courseId}")
+    void checkStudentExistInCourse(@PathVariable("studentId") Long studentId, @PathVariable("courseId") Long courseId);
+
     @GetMapping("/student-course-assignment/findCourseListBystudentId/{studentId}")
     List<Long> getCoursesListByStudentId(@PathVariable Long studentId);
 

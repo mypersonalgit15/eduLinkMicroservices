@@ -148,7 +148,6 @@ public class CourseServiceImpl implements ICourseService{
         return "Enrolled SuccessFull!";
     }
 
-
     @Override
     public List<CourseProjection> findAllAvailableCourse() throws CourseException {
         log.info("User has requested to display course List!");
@@ -212,10 +211,6 @@ public class CourseServiceImpl implements ICourseService{
         log.info("Course Id: {} updated successfully", courseId);
         return "Course updated successfully!";
     }
-
-
-
-
 
     @Override
     public List<com.cts.dto.response.CourseProjection> getCoursesByFaculty(Long facultyId) {
