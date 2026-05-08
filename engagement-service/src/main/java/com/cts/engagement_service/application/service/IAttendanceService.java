@@ -8,4 +8,5 @@ import java.util.List;
 public interface IAttendanceService {
     List<CourseAttendanceProjection> findAttendanceByCourse(Long studentId);
     String registerAttendanceByStudentId(AttendanceRegistrationDto attendanceRegistrationDto);
+    double findAttendancePercentageByCourseIdAndStudentId(Long courseId, Long studentId);
 }

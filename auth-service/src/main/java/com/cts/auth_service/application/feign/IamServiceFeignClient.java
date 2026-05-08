@@ -9,12 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "iam-service")
 public interface IamServiceFeignClient {
 
-    @GetMapping("/appUser/findAppUserDetailsByAppUserId/{appUserId}")
-    AppUserDetailByIdDto findAppUserDetailsByAppUserId(@PathVariable Long appUserId);
-
-    @GetMapping("/appUser/findAppUserNameByAppUserId/{appUserId}")
-    String findAppUserNameByAppUserId(@PathVariable Long appUserId);
-
     @GetMapping("/appUser/findAppUserByEmail/{email}")
     UserAuthDto findAppUserByEmail(@PathVariable String email);
 }

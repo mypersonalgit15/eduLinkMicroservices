@@ -6,6 +6,7 @@ import com.cts.auth_service.application.feign.StudentServiceFeign;
 import com.cts.auth_service.security.util.JwtUtil;
 import com.cts.dto.request.LoginDto;
 import com.cts.dto.response.LoginResponseDto;
+import com.cts.dto.response.UserAuthDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,13 +35,22 @@ public class AuthService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getEmail());
         String role = userDetails.getAuthorities().stream().findFirst().get().getAuthority().replace("ROLE_", "");
         log.debug("Fetching user details from IAM Service for email: {}", loginDto.getEmail());
-        Long userId = iamServiceFeignClient.findAppUserByEmail(loginDto.getEmail()).getId();
-        String userName = iamServiceFeignClient.findAppUserNameByAppUserId(userId);
+        UserAuthDto userAuthDto = iamServiceFeignClient.findAppUserByEmail(loginDto.getEmail());
+        Long userId = userAuthDto.getId();
+        String userName = userAuthDto.getUserName();
         Long appUserId=null;
         if(role.equals("STUDENT")){
             appUserId = studentServiceFeign.findStudentIdByAppUserId(userId);
+            if(appUserId == null) {
+                log.error("Student record not found for AppUser ID: {}", userId);
+                throw new RuntimeException("Student record not found. Please complete student registration.");
+            }
         }else if(role.equals("FACULTY")){
             appUserId = facultyServiceFeign.findFacultyIdByAppUserId(userId);
+            if(appUserId == null) {
+                log.error("Faculty record not found for AppUser ID: {}", userId);
+                throw new RuntimeException("Faculty record not found. Please complete faculty registration.");
+            }
         }
         log.info("Generating JWT token for user: {}", userName);
         String token = jwtUtil.generateToken(userDetails, role, appUserId);

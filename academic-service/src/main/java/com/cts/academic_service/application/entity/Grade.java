@@ -16,9 +16,6 @@ public class Grade {
     private String status;
     private String grade;
     private Long studentId;
-
-    @ManyToOne
-    @JoinColumn(name = "exam_id", referencedColumnName = "id")
-    private Exam exam;
+    private Long courseId;
 
 }
