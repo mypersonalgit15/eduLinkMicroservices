@@ -22,5 +22,8 @@ public interface GradeRepository extends JpaRepository<Grade,Long> {
 
     @Query("select new com.cts.dto.response.StudentGradeProjection(g.score,g.grade) from Grade g where g.studentId = :studentId and g.courseId = :courseId")
     StudentGradeProjection findGradeByStudentIdAndCourseId(@Param("studentId") Long studentId, @Param("courseId") Long courseId);
+
+    @Query("select g.status from Grade g where g.studentId = :studentId and g.courseId = :courseId")
+    String findGradeStatusByCourseIdAndStudentId(@Param("courseId") Long courseId, @Param("studentId") Long studentId);
 }
 

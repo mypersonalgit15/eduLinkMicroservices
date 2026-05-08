@@ -3,7 +3,6 @@ package com.cts.academic_service.application.service;
 
 import com.cts.academic_service.application.entity.Grade;
 import com.cts.academic_service.application.feign.AttendanceFeign;
-import com.cts.academic_service.application.feign.StudentFeign;
 import com.cts.academic_service.application.repository.GradeRepository;
 import com.cts.academic_service.application.util.DtoMapper;
 import com.cts.classexception.GradeException;
@@ -25,6 +24,11 @@ public class GradeServiceImpl implements IGradeService{
 
     @Override
     public String registerGrade(GradeRegistration gradeRegistration) {
+        String gradeStatus = gradeRepository.findGradeStatusByCourseIdAndStudentId(gradeRegistration.getCourseId(), gradeRegistration.getStudentId());
+        if(gradeStatus.equals("COMPLETED")){
+            log.warn("Grade registration skipped: Student ID {} already has a grade for Course ID {}", gradeRegistration.getStudentId(), gradeRegistration.getCourseId());
+            return "You have already submitted exam for this course.";
+        }
         log.info("Starting grade registration for Student ID: {} in Course ID: {}",gradeRegistration.getStudentId(), gradeRegistration.getCourseId());
         double attendancePercentage  = attendanceFeign.findAttendancePercentageByCourseIdAndStudentId(gradeRegistration.getCourseId(), gradeRegistration.getStudentId());
         log.debug("Fetched attendance percentage from Feign: {}%", attendancePercentage);
