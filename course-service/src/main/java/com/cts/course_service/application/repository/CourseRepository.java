@@ -29,7 +29,7 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
     @Query("select c.courseTitle from Course c where c.courseId = :courseId")
     String findCourseTitleByCourseId(@Param("courseId") Long courseId);
 
-    @Query(" select new com.cts.course_service.application.projection.CourseDetailProjection(c.courseTitle," +
+    @Query(" select new com.cts.course_service.application.projection.CourseDetailProjection(c.courseId,c.courseTitle," +
             " c.courseGradeLevel,c.courseRating) from Course c where c.courseId = :courseId")
     Optional<CourseDetailProjection> findCourseListByCourseId(@Param("courseId") Long courseId);
 }
