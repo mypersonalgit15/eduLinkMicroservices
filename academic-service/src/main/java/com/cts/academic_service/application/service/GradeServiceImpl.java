@@ -25,7 +25,7 @@ public class GradeServiceImpl implements IGradeService{
     @Override
     public String registerGrade(GradeRegistration gradeRegistration) {
         String gradeStatus = gradeRepository.findGradeStatusByCourseIdAndStudentId(gradeRegistration.getCourseId(), gradeRegistration.getStudentId());
-        if(gradeStatus.equals("COMPLETED")){
+        if(gradeStatus!=null && gradeStatus.equals("COMPLETED")){
             log.warn("Grade registration skipped: Student ID {} already has a grade for Course ID {}", gradeRegistration.getStudentId(), gradeRegistration.getCourseId());
             return "You have already submitted exam for this course.";
         }
