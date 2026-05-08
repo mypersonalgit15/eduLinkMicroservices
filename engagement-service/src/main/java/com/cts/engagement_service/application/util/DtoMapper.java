@@ -12,6 +12,13 @@ public class DtoMapper {
         FeedBack feedBack = new FeedBack();
         feedBack.setMessage(feedbackDto.getComment());
         feedBack.setRating(feedbackDto.getRating());
+
+        // ADD THIS LINE to save the User ID to the database
+        feedBack.setAppUserRoleId(feedbackDto.getAppUserRoleId());
+
+        // Optional: If your FeedBack entity has a reviewerType column, save that too!
+        // feedBack.setReviewerType(feedbackDto.getReviewerType());
+
         return feedBack;
     }
     public static Attendance attendanceDtoSeparator(AttendanceRegistrationDto dto) {
