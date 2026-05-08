@@ -2,6 +2,7 @@ package com.cts.academic_service.application.repository;
 
 
 import com.cts.academic_service.application.entity.Grade;
+import com.cts.dto.response.StudentGradeProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,7 +20,7 @@ public interface GradeRepository extends JpaRepository<Grade,Long> {
     @Query("select g.status from Grade g where g.gradeId = :gradeId")
     String findGradeStatus(@Param("gradeId") Long gradeId);
 
-    @Query("select sum(g.score) from Grade g where g.studentId = :studentId")
-    double findGradeByStudentId(@Param("studentId") Long studentId);
+    @Query("select new com.cts.dto.response.StudentGradeProjection(g.score,g.grade) from Grade g where g.studentId = :studentId and g.courseId = :courseId")
+    StudentGradeProjection findGradeByStudentIdAndCourseId(@Param("studentId") Long studentId, @Param("courseId") Long courseId);
 }
 

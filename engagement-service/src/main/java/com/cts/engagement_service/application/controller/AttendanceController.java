@@ -33,4 +33,11 @@ public class AttendanceController {
         log.info("REST request to get attendance details for Student ID: {}", studentId);
         return ResponseEntity.status(200).body(attendanceService.findAttendanceByCourse(studentId));
     }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/attendancePercentage/{courseId}/{studentId}")
+    public double findAttendancePercentageByCourseIdAndStudentId(@Valid @PathVariable Long courseId, @Valid @PathVariable Long studentId){
+        log.info("REST request to calculate attendance percentage for Student ID: {} in Course ID: {}", studentId, courseId);
+        return attendanceService.findAttendancePercentageByCourseIdAndStudentId(courseId, studentId);
+    }
 }

@@ -24,7 +24,4 @@ public class Exam {
     private String examStatus;
     private int candidates;
     private Long courseId;
-
-    @OneToMany(mappedBy = "exam")
-    private List<Grade> gradeList;
 }

@@ -2,9 +2,13 @@ package com.cts.academic_service.application.service;
 
 
 import com.cts.academic_service.application.entity.Grade;
+import com.cts.academic_service.application.feign.AttendanceFeign;
 import com.cts.academic_service.application.feign.StudentFeign;
 import com.cts.academic_service.application.repository.GradeRepository;
+import com.cts.academic_service.application.util.DtoMapper;
 import com.cts.classexception.GradeException;
+import com.cts.dto.request.GradeRegistration;
+import com.cts.dto.response.StudentGradeProjection;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +21,19 @@ import java.util.Optional;
 @AllArgsConstructor
 public class GradeServiceImpl implements IGradeService{
     private final GradeRepository gradeRepository;
-    private final StudentFeign studentFeign;
+    private final AttendanceFeign attendanceFeign;
+
+    @Override
+    public String registerGrade(GradeRegistration gradeRegistration) {
+        log.info("Starting grade registration for Student ID: {} in Course ID: {}",gradeRegistration.getStudentId(), gradeRegistration.getCourseId());
+        double attendancePercentage  = attendanceFeign.findAttendancePercentageByCourseIdAndStudentId(gradeRegistration.getCourseId(), gradeRegistration.getStudentId());
+        log.debug("Fetched attendance percentage from Feign: {}%", attendancePercentage);
+        double attendanceScoreWeighted = attendancePercentage * 0.7;
+        Grade grade = DtoMapper.gradeDto(gradeRegistration, attendanceScoreWeighted+30);
+        gradeRepository.save(grade);
+        log.info("Grade successfully saved to database for Student ID: {}", gradeRegistration.getStudentId());
+        return "Thanks for examining! Your grade is registered successfully.";
+    }
 
     @Override
     public String findGradeStatus(Long gradeId) throws GradeException {
@@ -33,16 +49,15 @@ public class GradeServiceImpl implements IGradeService{
     }
 
     @Override
-    public double findTotalGradeByStudentId(Long studentId) throws GradeException {
-        studentFeign.checkStudentExistByStudentId(studentId);
+    public StudentGradeProjection findTotalGradeByStudentId(Long studentId, Long courseId) throws GradeException {
         log.info("Calculating total grade for student ID: {}", studentId);
         Optional<Grade> grade = gradeRepository.checkStudentAvailableInGrade(studentId);
         if(grade.isEmpty()){
             log.warn("Grade calculation aborted: Student ID {} has no recorded tests.", studentId);
             throw new GradeException(studentId+" is not given any test yet!",HttpStatus.NOT_FOUND);
         }
-        double totalGrade = gradeRepository.findGradeByStudentId(studentId);
-        log.info("Total grade for student ID {}: {}", studentId, totalGrade);
-        return totalGrade;
+        StudentGradeProjection studentGradeProjection = gradeRepository.findGradeByStudentIdAndCourseId(studentId,courseId);
+        log.info("Total grade for student ID {}: {}", studentId, studentGradeProjection.getGrade());
+        return studentGradeProjection;
     }
 }
