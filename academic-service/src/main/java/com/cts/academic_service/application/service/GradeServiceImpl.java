@@ -7,12 +7,14 @@ import com.cts.academic_service.application.repository.GradeRepository;
 import com.cts.academic_service.application.util.DtoMapper;
 import com.cts.classexception.GradeException;
 import com.cts.dto.request.GradeRegistration;
+import com.cts.dto.response.GradeDetailsByStudentIdDto;
 import com.cts.dto.response.StudentGradeProjection;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -55,13 +57,19 @@ public class GradeServiceImpl implements IGradeService{
     @Override
     public StudentGradeProjection findTotalGradeByStudentId(Long studentId, Long courseId) throws GradeException {
         log.info("Calculating total grade for student ID: {}", studentId);
-        Optional<Grade> grade = gradeRepository.checkStudentAvailableInGrade(studentId);
-        if(grade.isEmpty()){
-            log.warn("Grade calculation aborted: Student ID {} has no recorded tests.", studentId);
-            throw new GradeException(studentId+" is not given any test yet!",HttpStatus.NOT_FOUND);
-        }
         StudentGradeProjection studentGradeProjection = gradeRepository.findGradeByStudentIdAndCourseId(studentId,courseId);
         log.info("Total grade for student ID {}: {}", studentId, studentGradeProjection.getGrade());
         return studentGradeProjection;
+    }
+
+    @Override
+    public List<GradeDetailsByStudentIdDto> findAllGradesByStudentId(Long studentId) throws GradeException {
+        List<GradeDetailsByStudentIdDto> gradeDetailsByStudentIdDto = gradeRepository.findAllGradeByStudentId(studentId);
+        if(gradeDetailsByStudentIdDto.isEmpty()){
+            log.warn("Grade retrieval failed: Student ID {} has no recorded grades.", studentId);
+            throw new GradeException(studentId+" is not given any test yet!",HttpStatus.NOT_FOUND);
+        }
+        log.info("Successfully retrieved {} grades for student ID: {}", gradeDetailsByStudentIdDto.size(), studentId);
+        return gradeDetailsByStudentIdDto;
     }
 }

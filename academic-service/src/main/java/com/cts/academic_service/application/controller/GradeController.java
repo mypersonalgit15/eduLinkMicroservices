@@ -3,6 +3,7 @@ package com.cts.academic_service.application.controller;
 
 import com.cts.academic_service.application.service.IGradeService;
 import com.cts.dto.request.GradeRegistration;
+import com.cts.dto.response.GradeDetailsByStudentIdDto;
 import com.cts.dto.response.StudentGradeProjection;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -36,8 +39,15 @@ public class GradeController {
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/totalGrade/{studentId}/{courseId}")
     public ResponseEntity<StudentGradeProjection> findTotalGradeByStudentId(@Valid @PathVariable Long studentId, @PathVariable Long courseId){
-        log.info("API call: Calculating total grade for student ID: {}", studentId);
+        log.info("Request intercepted for calculating total grade for student ID: {}", studentId);
         return ResponseEntity.status(200).body(gradeService.findTotalGradeByStudentId(studentId,courseId));
+    }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/allGrades/{studentId}")
+    public ResponseEntity<List<GradeDetailsByStudentIdDto>> findAllGradesByStudentId(@Valid @PathVariable Long studentId){
+        log.info("API call: Fetching all grades for student ID: {}", studentId);
+        return ResponseEntity.status(200).body(gradeService.findAllGradesByStudentId(studentId));
     }
 }
 
