@@ -1,11 +1,13 @@
 package com.cts.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+
+@Data
 @AllArgsConstructor
 public class FeedbackProjection {
+    private Long appUserRoleId;
     private String appUserName;
     private String message;
     private Double rating;

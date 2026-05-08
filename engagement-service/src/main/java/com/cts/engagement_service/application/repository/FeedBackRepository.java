@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface FeedBackRepository extends JpaRepository<FeedBack,Long> {
-    @Query("select  new com.cts.dto.response.FeedbackProjection(f.appUserName, f.message, f.rating) from FeedBack f")
+    @Query("select  new com.cts.dto.response.FeedbackProjection(f.appUserRoleId,f.appUserName, f.message, f.rating) from FeedBack f")
     List<FeedbackProjection> findFeedBackList();
 }

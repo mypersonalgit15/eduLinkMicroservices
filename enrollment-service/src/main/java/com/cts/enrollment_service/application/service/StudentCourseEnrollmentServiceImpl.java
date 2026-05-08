@@ -33,7 +33,7 @@ public class StudentCourseEnrollmentServiceImpl implements IStudentCourseEnrollm
 
     }
     @Override
-    public void checkStudentExistInCourse(Long studentId, Long courseId) {
+    public boolean checkStudentExistInCourse(Long studentId, Long courseId) {
         log.info("Received request to check if student with ID {} is enrolled in course with ID {}", studentId, courseId);
         boolean isEnrolled = studentCourseEnrollmentRepository.isAlreadyEnrolled(studentId, courseId);
         if (!isEnrolled) {
@@ -41,6 +41,7 @@ public class StudentCourseEnrollmentServiceImpl implements IStudentCourseEnrollm
             throw new StudentCourseEnrollmentException("Student is not enrolled in this course.", HttpStatus.NOT_FOUND);
         }
         log.info("Successfully verified enrollment of student with ID {} in course with ID {}", studentId, courseId);
+        return true;
     }
     @Override
     public List<Long> getEnrolledCourseIdsByStudentId(Long studentId) throws StudentCourseEnrollmentException {
