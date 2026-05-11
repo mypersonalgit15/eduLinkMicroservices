@@ -32,4 +32,8 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
     @Query(" select new com.cts.course_service.application.projection.CourseDetailProjection(c.courseId,c.courseTitle," +
             " c.courseGradeLevel,c.courseRating) from Course c where c.courseId = :courseId")
     Optional<CourseDetailProjection> findCourseListByCourseId(@Param("courseId") Long courseId);
+    @Query("SELECT new com.cts.dto.response.CourseProjection(c.courseId, c.courseTitle, " +
+            "c.courseSubject, c.courseGradeLevel, c.courseCredit, c.courseDescription, c.courseStatus, c.courseRating) " +
+            "FROM Course c WHERE LOWER(c.courseTitle) LIKE LOWER(CONCAT('%', :courseName, '%')) AND c.courseStatus='ACTIVE'")
+    List<CourseProjection> searchCoursesByName(@Param("courseName") String courseName);
 }

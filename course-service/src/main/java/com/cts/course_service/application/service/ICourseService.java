@@ -5,6 +5,7 @@ import com.cts.course_service.application.projection.CourseDetailProjection;
 import com.cts.dto.response.CourseProjection;
 import com.cts.dto.request.CourseEnrollmentDto;
 import com.cts.dto.request.CourseRegistrationDto;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,10 @@ public interface ICourseService {
     String findCourseTitleByCourseId(Long courseId);
     String updateCourse(Long courseId, CourseRegistrationDto courseRegistrationDto);
     String patchCourse(Long courseId, Map<String, Object> updates);
+
+    @Transactional
+    List<CourseProjection> searchCoursesByName(String courseName);
+
     String deleteCourse(Long courseId);
     List<CourseProjection> getCoursesByFaculty(Long facultyId);
     public int getFacultyCourseCount(Long facultyId );

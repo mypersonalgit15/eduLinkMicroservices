@@ -104,6 +104,11 @@ public class CourseServiceImpl implements ICourseService{
         log.info("Course ID: {} partially updated successfully", courseId);
         return "Course partially updated successfully!";
     }
+    @Transactional
+    @Override
+    public List<CourseProjection> searchCoursesByName(String courseName) {
+        return courseRepository.searchCoursesByName(courseName);
+    }
 
     @Override
     @Transactional
