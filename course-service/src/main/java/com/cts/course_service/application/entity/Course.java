@@ -1,5 +1,4 @@
 package com.cts.course_service.application.entity;
-import com.cts.util.DtoMapper;
 import jakarta.persistence.*;
 import lombok.Data;
 

@@ -49,6 +49,13 @@ public class GradeController {
         log.info("API call: Fetching all grades for student ID: {}", studentId);
         return ResponseEntity.status(200).body(gradeService.findAllGradesByStudentId(studentId));
     }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/submitedGradesCount/{studentId}")
+    public ResponseEntity<Integer> findAllGradesCountByStudentId(@Valid @PathVariable Long studentId){
+        log.info("API call: Fetching all grades count for student ID: {}", studentId);
+        return ResponseEntity.status(200).body(gradeService.findAllGradesCountByStudentId(studentId));
+    }
 }
 
 

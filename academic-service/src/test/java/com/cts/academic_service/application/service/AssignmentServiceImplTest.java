@@ -1,7 +1,5 @@
 package com.cts.academic_service.application.service;
 
-import com.cts.academic_service.application.entity.AssignmentStatus;
-import com.cts.academic_service.application.repository.AssignmentStatusRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

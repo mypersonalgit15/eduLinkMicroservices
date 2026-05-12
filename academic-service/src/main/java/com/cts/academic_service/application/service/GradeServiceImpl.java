@@ -72,4 +72,9 @@ public class GradeServiceImpl implements IGradeService{
         log.info("Successfully retrieved {} grades for student ID: {}", gradeDetailsByStudentIdDto.size(), studentId);
         return gradeDetailsByStudentIdDto;
     }
+
+    @Override
+    public int findAllGradesCountByStudentId(Long studentId) {
+        return gradeRepository.findAllGradeCountByStudentId(studentId);
+    }
 }

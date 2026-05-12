@@ -1,4 +1,4 @@
-package com.cts.classexception;
+package com.cts.engagement_service.application.classexception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

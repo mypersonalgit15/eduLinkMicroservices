@@ -1,6 +1,5 @@
 package com.cts.academic_service.application.util;
 
-import com.cts.academic_service.application.entity.Exam;
 import com.cts.academic_service.application.entity.Grade;
 import com.cts.dto.request.ExamCreationRequestDto;
 import com.cts.dto.request.GradeRegistration;
@@ -19,17 +18,5 @@ public class DtoMapper {
         grade.setStudentId(gradeRegistration.getStudentId());
         grade.setCourseId(gradeRegistration.getCourseId());
         return grade;
-    }
-
-    public static Exam ExamDtoSeparator(ExamCreationRequestDto examCreationRequestDto) {
-        Exam exam = new Exam();
-        exam.setExamName(examCreationRequestDto.getExamName());
-        exam.setExamLocalDateTime(LocalDateTime.now());
-        exam.setExamStatus(examCreationRequestDto.getStatus());
-        exam.setCandidates(examCreationRequestDto.getCandidates());
-        Long examId= UIDGeneratorUtils.uidGenerator();
-        exam.setExamId(examId);
-        exam.setCourseId(examCreationRequestDto.getCourseId());
-        return exam;
     }
 }

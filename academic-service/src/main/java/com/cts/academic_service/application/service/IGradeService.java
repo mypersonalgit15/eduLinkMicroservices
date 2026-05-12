@@ -11,4 +11,5 @@ public interface IGradeService {
     String findGradeStatus(Long gradeId);
     StudentGradeProjection findTotalGradeByStudentId(Long studentId, Long courseId);
     List<GradeDetailsByStudentIdDto> findAllGradesByStudentId(Long studentId);
+    int findAllGradesCountByStudentId(Long studentId);
 }

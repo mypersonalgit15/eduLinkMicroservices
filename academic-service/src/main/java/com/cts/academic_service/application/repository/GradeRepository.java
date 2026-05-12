@@ -30,5 +30,9 @@ public interface GradeRepository extends JpaRepository<Grade,Long> {
 
     @Query("select new com.cts.dto.response.GradeDetailsByStudentIdDto(g.courseId, g.score, g.grade) from Grade g where g.studentId = :studentId")
     List<GradeDetailsByStudentIdDto> findAllGradeByStudentId(@Param("studentId") Long studentId);
+
+    @Query("select count(g) from Grade g where g.studentId = :studentId")
+    int findAllGradeCountByStudentId(@Param("studentId") Long studentId);
+
 }
 

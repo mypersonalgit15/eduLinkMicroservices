@@ -2,6 +2,7 @@ package com.cts.engagement_service.application.service;
 
 import com.cts.dto.request.AttendanceRegistrationDto;
 import com.cts.dto.response.CourseAttendanceProjection;
+import com.cts.engagement_service.application.classexception.AttendanceException;
 import com.cts.engagement_service.application.dtoMapper.DtoMapper;
 import com.cts.engagement_service.application.entity.Attendance;
 import com.cts.engagement_service.application.feign.CourseFeign;
@@ -12,6 +13,7 @@ import com.cts.util.DateUtils;
 import com.cts.util.AttendanceCalculator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,7 +70,7 @@ public class AttendanceServiceImpl implements IAttendanceService {
     }
     @Override
     @Transactional
-    public String registerAttendanceByStudentId(AttendanceRegistrationDto attendanceRegistrationDto) {
+    public String registerAttendanceByStudentId(AttendanceRegistrationDto attendanceRegistrationDto) throws AttendanceException {
         Long studentId = attendanceRegistrationDto.getStudentId();
         Long courseId = attendanceRegistrationDto.getCourseId();
 
@@ -87,7 +89,7 @@ public class AttendanceServiceImpl implements IAttendanceService {
             if (LocalDateTime.now().isBefore(unlockTime)) {
                 log.warn("Lockout Active: Student {} tried to mark attendance too early. Next available: {}",
                         studentId, unlockTime);
-                return "Attendance locked! You can mark it again after " + unlockTime.toString();
+                throw new AttendanceException("Attendance locked! You can mark it again after " + unlockTime.toString(), HttpStatus.BAD_REQUEST);
             }
         }
 

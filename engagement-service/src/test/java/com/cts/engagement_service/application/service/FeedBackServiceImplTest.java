@@ -1,6 +1,6 @@
 package com.cts.engagement_service.application.service;
 
-import com.cts.classexception.FeedbackException;
+import com.cts.engagement_service.application.classexception.FeedbackException;
 import com.cts.dto.request.FeedbackDto;
 import com.cts.dto.response.FeedbackProjection;
 import com.cts.engagement_service.application.entity.FeedBack;
