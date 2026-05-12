@@ -23,7 +23,7 @@ public interface ICourseService {
 
     String deleteCourse(Long courseId);
     List<CourseProjection> getCoursesByFaculty(Long facultyId);
-    public int getFacultyCourseCount(Long facultyId );
+    int getFacultyCourseCount(Long facultyId );
     CourseDetailByIdProjection findCourseDetailsById(Long courseId);
     String courseEnrollmentRequest(CourseEnrollmentDto courseEnrollmentDto);
     String updateCourseRating(Long courseId, double newCourseRating);

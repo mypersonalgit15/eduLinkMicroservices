@@ -13,6 +13,7 @@ public class CourseDetailByIdProjection {
     private String courseStatus;
     private double courseRating;
     private String facultyName;
+    private Long facultyId;
     private double facultyRating;
     private int facultyYearOfExperience;
 }

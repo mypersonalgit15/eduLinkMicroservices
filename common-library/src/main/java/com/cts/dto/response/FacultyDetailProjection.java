@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class FacultyDetailProjection {
     private String facultyName;
+    private Long facultyId;
     private double facultyRating;
     private int facultyYearOfExperience;
 }

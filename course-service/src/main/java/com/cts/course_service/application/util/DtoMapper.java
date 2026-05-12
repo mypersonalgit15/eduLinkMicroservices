@@ -47,6 +47,7 @@ public class DtoMapper {
         courseDetailByIdProjection.setCourseRating(courseProjection.getCourseRating());
         courseDetailByIdProjection.setCourseDescription(courseProjection.getCourseDescription());
         courseDetailByIdProjection.setFacultyName(facultyDetailProjection.getFacultyName());
+        courseDetailByIdProjection.setFacultyId(facultyDetailProjection.getFacultyId());
         courseDetailByIdProjection.setFacultyRating(facultyDetailProjection.getFacultyRating());
         courseDetailByIdProjection.setFacultyYearOfExperience(facultyDetailProjection.getFacultyYearOfExperience());
         return courseDetailByIdProjection;
