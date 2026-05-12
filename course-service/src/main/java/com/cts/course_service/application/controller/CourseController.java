@@ -57,6 +57,11 @@ public class CourseController {
     public Integer getFacultyCourseCount(@Valid @PathVariable Long facultyId) {
         return iCourseService.getFacultyCourseCount(facultyId);
     }
+    @GetMapping("/search")
+    public ResponseEntity<List<CourseProjection>> searchCourses(@RequestParam String name) {
+        List<CourseProjection> results = iCourseService.searchCoursesByName(name);
+        return ResponseEntity.ok(results);
+    }
 
     @PreAuthorize("hasAnyRole('FACULTY', 'STUDENT')")
     @GetMapping("/findCourseDetailsById/{courseId}")
